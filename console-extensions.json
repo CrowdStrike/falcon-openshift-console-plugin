@@ -1,0 +1,29 @@
+[
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "crowdstrike-section",
+      "insertAfter": "usermanagement",
+      "perspective": "admin",
+      "name": "CrowdStrike"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/crowdstrike",
+      "component": { "$codeRef": "Overview" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "crowdstrike",
+      "name": "Overview",
+      "href": "/crowdstrike",
+      "perspective": "admin",
+      "section": "crowdstrike-section"
+    }
+  }
+]
