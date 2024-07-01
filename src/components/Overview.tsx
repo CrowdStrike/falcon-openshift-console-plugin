@@ -13,14 +13,12 @@ import {
   Title,
   Grid,
   GridItem,
+  Spinner,
 } from '@patternfly/react-core';
-import { useK8sModel, k8sGet } from '@openshift-console/dynamic-plugin-sdk';
-import './NodeCoverageCard';
+import { useK8sModel, k8sGet, K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 import NodeCoverageCard from './NodeCoverageCard';
 
 export default function Overview() {
-  // const { t } = useTranslation('plugin__console-plugin-template');
-
   const [fnsModel] = useK8sModel({
     group: 'falcon.crowdstrike.com',
     version: 'v1alpha1',
@@ -32,16 +30,17 @@ export default function Overview() {
     kind: 'DaemonSet',
   });
 
-  const [fnsStatus, setFnsStatus] = React.useState('');
-  const [dsStatus, setDsStatus] = React.useState('');
+  const [falconNodeSensor, setFalconNodeSensor] = React.useState<K8sResourceCommon>(null);
+  const [daemonSet, setDaemonSet] = React.useState<K8sResourceCommon>(null);
 
   React.useEffect(() => {
     k8sGet({
       model: fnsModel,
+      // could specify name to get just 1 but no guarantee someone didn't rename it
     })
       .then((data) => {
         // i have to refer to ["items"] vs. .items because K8sResourceCommon doesn't have an items prop
-        setFnsStatus(data['items'][0].status.sensor);
+        setFalconNodeSensor(data['items'][0]);
       })
       .catch((err) => {
         console.log(err);
@@ -49,11 +48,10 @@ export default function Overview() {
 
     k8sGet({
       model: dsModel,
-      name: 'falcon-node-sensor',
       ns: 'falcon-system',
     })
       .then((data) => {
-        setDsStatus(`${data['status'].numberReady} / ${data['status'].desiredNumberScheduled}`);
+        setDaemonSet(data['items'][0]);
       })
       .catch((err) => {
         console.log(err);
@@ -80,18 +78,32 @@ export default function Overview() {
                   <DescriptionList>
                     <DescriptionListGroup>
                       <DescriptionListTerm>FalconNodeSensor Status</DescriptionListTerm>
-                      <DescriptionListDescription>{fnsStatus}</DescriptionListDescription>
+                      <DescriptionListDescription>
+                        {/* status doesn't exist as a prop on K8sResourceCommon */}
+                        {falconNodeSensor ? (
+                          falconNodeSensor['status'].sensor
+                        ) : (
+                          <Spinner size="md" />
+                        )}
+                      </DescriptionListDescription>
                     </DescriptionListGroup>
                     <DescriptionListGroup>
                       <DescriptionListTerm>DaemonSet Status</DescriptionListTerm>
-                      <DescriptionListDescription>{dsStatus}</DescriptionListDescription>
+                      <DescriptionListDescription>
+                        {daemonSet ? (
+                          `${daemonSet['status'].numberReady} ready /
+                          ${daemonSet['status'].desiredNumberScheduled} desired`
+                        ) : (
+                          <Spinner size="md" />
+                        )}
+                      </DescriptionListDescription>
                     </DescriptionListGroup>
                   </DescriptionList>
                 </CardBody>
               </Card>
             </GridItem>
             <GridItem span={6}>
-              <NodeCoverageCard />
+              <NodeCoverageCard daemonSet={daemonSet} />
             </GridItem>
           </Grid>
         </PageSection>
