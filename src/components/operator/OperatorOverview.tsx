@@ -1,24 +1,11 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
-import {
-  Card,
-  CardTitle,
-  CardBody,
-  DescriptionList,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  DescriptionListDescription,
-  Page,
-  PageSection,
-  Title,
-  Grid,
-  GridItem,
-  Spinner,
-} from '@patternfly/react-core';
+import { Page, PageSection, Title, Grid, GridItem } from '@patternfly/react-core';
 import { useK8sModel, k8sGet, K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
+import DeploymentStatusCard from './DeploymentStatusCard';
 import NodeCoverageCard from './NodeCoverageCard';
 
-export default function Overview() {
+export default function OperatorOverview() {
   const [fnsModel] = useK8sModel({
     group: 'falcon.crowdstrike.com',
     version: 'v1alpha1',
@@ -49,6 +36,7 @@ export default function Overview() {
     k8sGet({
       model: dsModel,
       ns: 'falcon-system',
+      // DaemonSet name matches FNS name, but just get the first instance
     })
       .then((data) => {
         setDaemonSet(data['items'][0]);
@@ -70,37 +58,7 @@ export default function Overview() {
         <PageSection isFilled={true}>
           <Grid hasGutter>
             <GridItem span={6}>
-              <Card>
-                <CardTitle>
-                  <Title headingLevel="h3">Sensor Deployment</Title>
-                </CardTitle>
-                <CardBody>
-                  <DescriptionList>
-                    <DescriptionListGroup>
-                      <DescriptionListTerm>FalconNodeSensor Status</DescriptionListTerm>
-                      <DescriptionListDescription>
-                        {/* status doesn't exist as a prop on K8sResourceCommon */}
-                        {falconNodeSensor ? (
-                          falconNodeSensor['status'].sensor
-                        ) : (
-                          <Spinner size="md" />
-                        )}
-                      </DescriptionListDescription>
-                    </DescriptionListGroup>
-                    <DescriptionListGroup>
-                      <DescriptionListTerm>DaemonSet Status</DescriptionListTerm>
-                      <DescriptionListDescription>
-                        {daemonSet ? (
-                          `${daemonSet['status'].numberReady} ready /
-                          ${daemonSet['status'].desiredNumberScheduled} desired`
-                        ) : (
-                          <Spinner size="md" />
-                        )}
-                      </DescriptionListDescription>
-                    </DescriptionListGroup>
-                  </DescriptionList>
-                </CardBody>
-              </Card>
+              <DeploymentStatusCard falconNodeSensor={falconNodeSensor} daemonSet={daemonSet} />
             </GridItem>
             <GridItem span={6}>
               <NodeCoverageCard daemonSet={daemonSet} />

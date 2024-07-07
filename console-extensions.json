@@ -1,19 +1,19 @@
 [
   {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/crowdstrike",
+      "component": { "$codeRef": "OperatorOverview" }
+    }
+  },
+  {
     "type": "console.navigation/section",
     "properties": {
       "id": "crowdstrike-section",
       "insertAfter": "usermanagement",
       "perspective": "admin",
       "name": "CrowdStrike"
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
-      "path": "/crowdstrike",
-      "component": { "$codeRef": "Overview" }
     }
   },
   {
@@ -24,6 +24,39 @@
       "href": "/crowdstrike",
       "perspective": "admin",
       "section": "crowdstrike-section"
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "kind": "Pod",
+        "version": "v1"
+      },
+      "page": {
+        "name": "CrowdStrike",
+        "href": "crowdstrike"
+      },
+      "component": {
+        "$codeRef": "PodTab"
+      }
+    }
+  },
+  {
+    "type": "console.tab/horizontalNav",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachine",
+        "version": "v1"
+      },
+      "page": {
+        "name": "CrowdStrike",
+        "href": "crowdstrike"
+      },
+      "component": {
+        "$codeRef": "VirtualMachineTab"
+      }
     }
   }
 ]
