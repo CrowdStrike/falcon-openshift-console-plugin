@@ -1,56 +1,14 @@
-# OpenShift Console Plugin Template
+# CrowdStrike OpenShift Console Plugin
 
-This project is a minimal template for writing a new OpenShift Console dynamic
-plugin.
+This is a dynamic plugin for the Red Hat OpenShift console. The plugin provides additional visibility
+to the Falcon operator and Falcon-protected virtual machines.
 
-[Dynamic plugins](https://github.com/openshift/console/tree/master/frontend/packages/console-dynamic-plugin-sdk)
-allow you to extend the
-[OpenShift UI](https://github.com/openshift/console)
-at runtime, adding custom pages and other extensions. They are based on
-[webpack module federation](https://webpack.js.org/concepts/module-federation/).
-Plugins are registered with console using the `ConsolePlugin` custom resource
-and enabled in the console operator config by a cluster administrator.
-
-Using the latest `v1` API version of `ConsolePlugin` CRD, requires OpenShift 4.12
-and higher. For using old `v1alpha1` API version us OpenShift version 4.10 or 4.11.
-
-For an example of a plugin that works with OpenShift 4.11, see the `release-4.11` branch.
-For a plugin that works with OpenShift 4.10, see the `release-4.10` branch.
+## Development
 
 [Node.js](https://nodejs.org/en/) and [yarn](https://yarnpkg.com) are required
 to build and run the example. To run OpenShift console in a container, either
 [Docker](https://www.docker.com) or [podman 3.2.0+](https://podman.io) and
 [oc](https://console.redhat.com/openshift/downloads) are required.
-
-## Getting started
-
-After cloning this repo, you should update the plugin metadata such as the
-plugin name in the `consolePlugin` declaration of [package.json](package.json).
-
-```json
-"consolePlugin": {
-  "name": "console-plugin-template",
-  "version": "0.0.1",
-  "displayName": "My Plugin",
-  "description": "Enjoy this shiny, new console plugin!",
-  "exposedModules": {
-    "ExamplePage": "./components/ExamplePage"
-  },
-  "dependencies": {
-    "@console/pluginAPI": "*"
-  }
-}
-```
-
-The template adds a single example page in the Home navigation section. The
-extension is declared in the [console-extensions.json](console-extensions.json)
-file and the React component is declared in
-[src/components/ExamplePage.tsx](src/components/ExamplePage.tsx).
-
-You can run the plugin using a local development environment or build an image
-to deploy it to a cluster.
-
-## Development
 
 ### Option 1: Local
 
@@ -174,14 +132,14 @@ the message for the current language from the `plugin__console-plugin-template`
 namespace. For example:
 
 ```json
-  {
-    "type": "console.navigation/section",
-    "properties": {
-      "id": "admin-demo-section",
-      "perspective": "admin",
-      "name": "%plugin__console-plugin-template~Plugin Template%"
-    }
+{
+  "type": "console.navigation/section",
+  "properties": {
+    "id": "admin-demo-section",
+    "perspective": "admin",
+    "name": "%plugin__console-plugin-template~Plugin Template%"
   }
+}
 ```
 
 Running `yarn i18n` updates the JSON files in the `locales` folder of the
@@ -210,7 +168,7 @@ Steps to generate reports
 
 1. In command prompt, navigate to root folder and execute the command `yarn run cypress-merge`
 2. Then execute command `yarn run cypress-generate`
-The cypress-report.html file is generated and should be in (/integration-tests/screenshots) directory
+   The cypress-report.html file is generated and should be in (/integration-tests/screenshots) directory
 
 ## References
 

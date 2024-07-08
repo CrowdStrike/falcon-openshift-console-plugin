@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/openshift/console-plugin-template.git"
+    "url": "https://github.com/crowdstrike/crowdstrike-openshift-console-plugin.git"
   },
   "scripts": {
     "clean": "rm -rf dist",
