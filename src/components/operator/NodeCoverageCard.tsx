@@ -39,7 +39,7 @@ export default function NodeCoverageCard({ daemonSet }) {
   return (
     <Card>
       <CardTitle>
-        <Title headingLevel="h3">Sensor Coverage</Title>
+        <Title headingLevel="h3">Sensor coverage</Title>
       </CardTitle>
       <CardBody>
         {loading ? (

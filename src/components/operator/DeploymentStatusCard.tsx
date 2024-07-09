@@ -16,12 +16,12 @@ export default function DeploymentStatusCard({ falconNodeSensor, daemonSet }) {
     <>
       <Card>
         <CardTitle>
-          <Title headingLevel="h3">Sensor Deployment</Title>
+          <Title headingLevel="h3">Sensor deployment</Title>
         </CardTitle>
         <CardBody>
           <DescriptionList>
             <DescriptionListGroup>
-              <DescriptionListTerm>FalconNodeSensor Status</DescriptionListTerm>
+              <DescriptionListTerm>FalconNodeSensor status</DescriptionListTerm>
               <DescriptionListDescription>
                 {/* status doesn't exist as a prop on K8sResourceCommon */}
                 {falconNodeSensor ? falconNodeSensor['status'].sensor : <Spinner size="md" />}

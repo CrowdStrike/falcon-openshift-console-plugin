@@ -1,12 +1,12 @@
 {
-  "name": "crowdstrike-openshift-console-plugin",
+  "name": "falcon-openshift-console-plugin",
   "version": "0.0.1",
-  "description": "CrowdStrike OpenShift console plugin",
+  "description": "CrowdStrike Falcon OpenShift console plugin",
   "private": true,
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/crowdstrike/crowdstrike-openshift-console-plugin.git"
+    "url": "https://github.com/crowdstrike/falcon-openshift-console-plugin.git"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -71,9 +71,9 @@
     "webpack-dev-server": "^4.7.4"
   },
   "consolePlugin": {
-    "name": "crowdstrike-openshift-console-plugin",
+    "name": "falcon-openshift-console-plugin",
     "version": "0.0.1",
-    "displayName": "CrowdStrike OpenShift console plugin",
+    "displayName": "CrowdStrike Falcon OpenShift console plugin",
     "description": "Extends the OpenShift console with data from the CrowdStrike Falcon platform.",
     "exposedModules": {
       "OperatorOverview": "./components/operator/OperatorOverview",
