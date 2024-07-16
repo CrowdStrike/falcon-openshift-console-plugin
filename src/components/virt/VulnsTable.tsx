@@ -23,8 +23,6 @@ export default function VulnsTable({ client, deviceId }) {
       });
   }, [client, deviceId]);
 
-  React.useEffect(() => {}, [vulns]);
-
   return (
     <>
       <Title headingLevel="h2">Vulnerabilities</Title>
@@ -36,12 +34,14 @@ export default function VulnsTable({ client, deviceId }) {
       {loading ? (
         <Skeleton />
       ) : (
-        <Table>
+        <Table variant="compact">
           <Thead>
-            <Th>Package</Th>
-            <Th>Severity</Th>
-            <Th>Base Score</Th>
-            <Th>CVE</Th>
+            <Tr>
+              <Th>Package</Th>
+              <Th>Severity</Th>
+              <Th>Base Score</Th>
+              <Th>CVE</Th>
+            </Tr>
           </Thead>
           <Tbody>
             {vulns.map((v) => {
