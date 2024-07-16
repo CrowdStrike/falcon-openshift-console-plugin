@@ -11,7 +11,9 @@ import * as React from 'react';
 import EndpointDetails from './EndpointDetails';
 import { FalconClient } from 'crowdstrike-falcon';
 import { k8sGet, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
+import DetectionsTable from './DetectionsTable';
 import NoAgent from './NoAgent';
+import VulnsTable from './VulnsTable';
 
 export default function VirtualMachineTab({ obj }) {
   const [loading, setLoading] = React.useState(true);
@@ -55,7 +57,6 @@ export default function VirtualMachineTab({ obj }) {
         if (resp['resources'].length > 1) {
           throw new Error(`Multiple matching agents: ${resp['resources']}`);
         } else if (resp['resources'].length == 0) {
-          // TODO: use empty state
           throw new Error(NO_HOST_ERR);
         }
         setDeviceId(resp['resources'][0]);
@@ -91,6 +92,8 @@ export default function VirtualMachineTab({ obj }) {
         {deviceId && (
           <>
             <EndpointDetails client={client} deviceId={deviceId} />
+            <DetectionsTable client={client} deviceId={deviceId} />
+            <VulnsTable client={client} deviceId={deviceId} />
           </>
         )}
 

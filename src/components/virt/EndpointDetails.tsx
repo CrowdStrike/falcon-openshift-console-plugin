@@ -58,7 +58,7 @@ export default function EndpointDetails({ client, deviceId }) {
           ) : (
             <>
               {detail('Hostname', host.hostname)}
-              {detail('Operating System', host.osVersion)}
+              {detail('Operating system', host.osVersion)}
               {detail('Kernel', host.kernelVersion)}
             </>
           )}
@@ -71,9 +71,9 @@ export default function EndpointDetails({ client, deviceId }) {
           ) : (
             <>
               {detail('Device ID', host.deviceId)}
-              {detail('Sensor Version', host.agentVersion)}
+              {detail('Sensor version', host.agentVersion)}
               {detail(
-                'In Reduced Functionality Mode',
+                'In reduced functionality mode',
                 host.reducedFunctionalityMode == 'yes' ? (
                   <>
                     <Icon status="warning" isInline>
