@@ -3113,9 +3113,10 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-"crowdstrike-falcon@file:../falconjs":
-  version "0.2.4"
-  resolved "file:../falconjs"
+crowdstrike-falcon@^0.2.5:
+  version "0.2.5"
+  resolved "https://registry.npmjs.org/crowdstrike-falcon/-/crowdstrike-falcon-0.2.5.tgz"
+  integrity sha512-RdUwIEBnlXT13wfi+g48UijXHse23p3Vn8bge9+3c+LnIIA4TEXXk0SsKY2hF5MsDBgpsWfQy5OwY9TMhs6iEg==
 
 crypt@0.0.2:
   version "0.0.2"

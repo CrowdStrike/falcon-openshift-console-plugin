@@ -30,8 +30,8 @@ export default function VirtualMachineTab({ obj }) {
   const NO_HOST_ERR = 'nohost';
 
   React.useEffect(() => {
-    k8sGet({ model: secretModel, name: 'crowdstrike-api', ns: obj.metadata.namespace }).then(
-      (secret) => {
+    k8sGet({ model: secretModel, name: 'crowdstrike-api', ns: obj.metadata.namespace })
+      .then((secret) => {
         setClient(
           new FalconClient({
             cloud: 'us-2', // TODO: cast cloud to FalconCloud type
@@ -40,8 +40,11 @@ export default function VirtualMachineTab({ obj }) {
             clientSecret: atob(secret['data'].client_secret),
           }),
         );
-      },
-    );
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, []);
   React.useEffect(() => {
     if (client == null) return;

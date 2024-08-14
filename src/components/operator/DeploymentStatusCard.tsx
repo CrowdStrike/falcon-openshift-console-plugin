@@ -28,7 +28,7 @@ export default function DeploymentStatusCard({ falconNodeSensor, daemonSet }) {
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>DaemonSet Status</DescriptionListTerm>
+              <DescriptionListTerm>DaemonSet status</DescriptionListTerm>
               <DescriptionListDescription>
                 {daemonSet ? (
                   `${daemonSet['status'].numberReady} ready /
