@@ -54,6 +54,7 @@ export default function VulnsTable({ client, deviceId }) {
                 </Tr>
               );
             })}
+            {/* TODO: what to show if there are no vulns reported (yet?) */}
           </Tbody>
         </Table>
       )}

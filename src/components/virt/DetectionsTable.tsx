@@ -1,4 +1,5 @@
 import { Alert, Skeleton, Title } from '@patternfly/react-core';
+import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import * as React from 'react';
 
 export default function DetectionsTable({ client, deviceId }) {
@@ -11,6 +12,12 @@ export default function DetectionsTable({ client, deviceId }) {
 
     client.alerts
       .getQueriesAlertsV1(0, undefined, undefined, `device.device_id:'${deviceId}'`)
+      .then((resp) => {
+        if (resp['resources'].length == 0) return;
+        return client.alerts.getV2({
+          compositeIds: resp['resources'],
+        });
+      })
       .then((resp) => {
         setAlerts(resp['resources']);
       })
@@ -30,7 +37,33 @@ export default function DetectionsTable({ client, deviceId }) {
           {error}
         </Alert>
       )}
-      {loading ? <Skeleton /> : <pre>{JSON.stringify(alerts, null, 2)}</pre>}
+      {loading ? (
+        <Skeleton />
+      ) : (
+        <Table variant="compact">
+          <Thead>
+            <Tr>
+              <Th>Description</Th>
+              <Th>Tactic</Th>
+              <Th>Severity</Th>
+              <Th>Date</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {alerts.map((a) => {
+              return (
+                <Tr>
+                  <Td>{a.description}</Td>
+                  <Td>{a.tactic}</Td>
+                  <Td>{a.severityName}</Td>
+                  <Td>{a.timestamp.toUTCString()}</Td>
+                </Tr>
+              );
+            })}
+            {/* TODO: what to show if there are no alerts reported (yet?) */}
+          </Tbody>
+        </Table>
+      )}
     </>
   );
 }

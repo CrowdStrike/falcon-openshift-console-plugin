@@ -21,10 +21,15 @@ export default function EndpointDetails({ client, deviceId }) {
   React.useEffect(() => {
     if (!client || !deviceId) return;
 
-    client.hosts.getDeviceDetailsV2([deviceId]).then((resp) => {
-      setHost(resp['resources'][0]);
-      setLoading(false);
-    });
+    client.hosts
+      .getDeviceDetailsV2([deviceId])
+      .then((resp) => {
+        setHost(resp['resources'][0]);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [client, deviceId]);
 
   const onRawToggle = (_event: React.MouseEvent, isExpanded: boolean) => {
