@@ -1,5 +1,16 @@
-import { Alert, Skeleton, Title } from '@patternfly/react-core';
-import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import {
+  Alert,
+  DataList,
+  DataListAction,
+  DataListCell,
+  DataListContent,
+  DataListItemCells,
+  DataListItemRow,
+  Icon,
+  Skeleton,
+  Title,
+} from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 
 export default function DetectionsTable({ client, deviceId }) {
@@ -40,29 +51,41 @@ export default function DetectionsTable({ client, deviceId }) {
       {loading ? (
         <Skeleton />
       ) : (
-        <Table variant="compact">
-          <Thead>
-            <Tr>
-              <Th>Description</Th>
-              <Th>Tactic</Th>
-              <Th>Severity</Th>
-              <Th>Date</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {alerts.map((a) => {
-              return (
-                <Tr>
-                  <Td>{a.description}</Td>
-                  <Td>{a.tactic}</Td>
-                  <Td>{a.severityName}</Td>
-                  <Td>{a.timestamp.toUTCString()}</Td>
-                </Tr>
-              );
-            })}
-            {/* TODO: what to show if there are no alerts reported (yet?) */}
-          </Tbody>
-        </Table>
+        <DataList aria-label="Endpoint alerts">
+          {alerts.map((a) => {
+            return (
+              <>
+                <DataListItemRow>
+                  <DataListItemCells
+                    dataListCells={[
+                      <DataListCell width={4}>{a.description}</DataListCell>,
+                      <DataListCell width={1}>{a.tactic}</DataListCell>,
+                      <DataListCell width={1}>{a.severityName}</DataListCell>,
+                      <DataListCell width={2}>{a.timestamp.toUTCString()}</DataListCell>,
+                    ]}
+                  />
+                  <DataListAction
+                    aria-label="Link to alert details in Falcon console"
+                    aria-labelledby="detailsLink"
+                    id="detailsLink"
+                  >
+                    {/* TODO: falcon_host_link not present in ExternalAlert spec but is returned by Alerts API */}
+                    <a href={a.falconHostLink} target="_blank">
+                      <Icon size="md">
+                        <ExternalLinkAltIcon />
+                      </Icon>
+                    </a>
+                  </DataListAction>
+                </DataListItemRow>
+                <DataListContent aria-label="Alert details">
+                  {/* TODO: cmdline is not in spec */}
+                  <pre>{a.cmdline}</pre>
+                </DataListContent>
+              </>
+            );
+          })}
+          {/* TODO: what to show if there are no alerts reported (yet?) */}
+        </DataList>
       )}
     </>
   );
