@@ -4,6 +4,7 @@ import {
   DataListAction,
   DataListCell,
   DataListContent,
+  DataListItem,
   DataListItemCells,
   DataListItemRow,
   Icon,
@@ -12,6 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import * as React from 'react';
+import SeverityLabel from '../shared/SeverityLabel';
 
 export default function DetectionsTable({ client, deviceId }) {
   const [loading, setLoading] = React.useState(true);
@@ -54,13 +56,15 @@ export default function DetectionsTable({ client, deviceId }) {
         <DataList aria-label="Endpoint alerts">
           {alerts.map((a) => {
             return (
-              <>
+              <DataListItem>
                 <DataListItemRow>
                   <DataListItemCells
                     dataListCells={[
                       <DataListCell width={4}>{a.description}</DataListCell>,
                       <DataListCell width={1}>{a.tactic}</DataListCell>,
-                      <DataListCell width={1}>{a.severityName}</DataListCell>,
+                      <DataListCell width={1}>
+                        <SeverityLabel name={a.severityName} />
+                      </DataListCell>,
                       <DataListCell width={2}>{a.timestamp.toUTCString()}</DataListCell>,
                     ]}
                   />
@@ -70,7 +74,7 @@ export default function DetectionsTable({ client, deviceId }) {
                     id="detailsLink"
                   >
                     {/* TODO: falcon_host_link not present in ExternalAlert spec but is returned by Alerts API */}
-                    <a href={a.falconHostLink} target="_blank">
+                    <a href={a.falcon_host_link} target="_blank">
                       <Icon size="md">
                         <ExternalLinkAltIcon />
                       </Icon>
@@ -81,7 +85,7 @@ export default function DetectionsTable({ client, deviceId }) {
                   {/* TODO: cmdline is not in spec */}
                   <pre>{a.cmdline}</pre>
                 </DataListContent>
-              </>
+              </DataListItem>
             );
           })}
           {/* TODO: what to show if there are no alerts reported (yet?) */}
