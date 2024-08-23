@@ -3,10 +3,13 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  DescriptionListTermHelpText,
+  DescriptionListTermHelpTextButton,
   ExpandableSection,
   Grid,
   GridItem,
   Icon,
+  Popover,
   Skeleton,
   Title,
 } from '@patternfly/react-core';
@@ -36,12 +39,20 @@ export default function EndpointDetails({ client, deviceId }) {
     setIsRawExpanded(isExpanded);
   };
 
-  function detail(desc, value) {
+  function detail(name, value, desc?) {
     return (
       <>
         <DescriptionList>
           <DescriptionListGroup>
-            <DescriptionListTerm>{desc}</DescriptionListTerm>
+            {desc ? (
+              <DescriptionListTermHelpText>
+                <Popover headerContent={<div>{name}</div>} bodyContent={<div>{desc}</div>}>
+                  <DescriptionListTermHelpTextButton>{name}</DescriptionListTermHelpTextButton>
+                </Popover>
+              </DescriptionListTermHelpText>
+            ) : (
+              <DescriptionListTerm>{name}</DescriptionListTerm>
+            )}
             <DescriptionListDescription>{value}</DescriptionListDescription>
           </DescriptionListGroup>
         </DescriptionList>
@@ -75,7 +86,11 @@ export default function EndpointDetails({ client, deviceId }) {
             </>
           ) : (
             <>
-              {detail('Device ID', host.deviceId)}
+              {detail(
+                'Device ID',
+                host.deviceId,
+                'The Device ID may also be referred to as the Agent ID or simply AID.',
+              )}
               {detail('Sensor version', host.agentVersion)}
               {detail(
                 'In reduced functionality mode',

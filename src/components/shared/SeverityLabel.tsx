@@ -2,7 +2,7 @@ import { Label } from '@patternfly/react-core';
 import { CriticalRiskIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 
-export default function SeverityLabel({ name }) {
+export default function SeverityLabel({ name, text = null }) {
   // const colors = {
   //   critical: "#C9190B", // red-100
   //   high: '#EC7A08', // orange-300
@@ -26,8 +26,14 @@ export default function SeverityLabel({ name }) {
 
   return (
     <Label color={color} icon={icon}>
-      {name.charAt(0).toUpperCase()}
-      {name.substring(1).toLowerCase()}
+      {text ? (
+        text
+      ) : (
+        <>
+          {name.charAt(0).toUpperCase()}
+          {name.substring(1).toLowerCase()}
+        </>
+      )}
     </Label>
   );
 }
