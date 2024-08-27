@@ -1,7 +1,11 @@
-# CrowdStrike OpenShift Console Plugin
+# Falcon OpenShift Console Plugin
 
 This is a dynamic plugin for the Red Hat OpenShift console. The plugin provides additional visibility
 to the Falcon operator and Falcon-protected virtual machines.
+
+## Support
+
+The Falcon OpenShift Console Plugin is an open source project, not a CrowdStrike product. As such, it carries no formal support, expressed or implied.
 
 ## Development
 
