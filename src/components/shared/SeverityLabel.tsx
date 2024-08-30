@@ -3,14 +3,6 @@ import { CriticalRiskIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 
 export default function SeverityLabel({ name, text = null }) {
-  // const colors = {
-  //   critical: "#C9190B", // red-100
-  //   high: '#EC7A08', // orange-300
-  //   medium: '#F4C145', // gold-300
-  //   low: '#5BA352', // green-400
-  //   informational: '#2B9AF3', // blue-300
-  //   unknown: '#8A8D90' // black-500
-  // }
   const n = name.toLowerCase();
 
   const colors = {

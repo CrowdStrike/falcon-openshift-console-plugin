@@ -14,6 +14,7 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import SeverityLabel from '../shared/SeverityLabel';
+import ProcessTree from './ProcessTree';
 
 export default function DetectionsTable({ client, deviceId }) {
   const [loading, setLoading] = React.useState(true);
@@ -82,8 +83,7 @@ export default function DetectionsTable({ client, deviceId }) {
                   </DataListAction>
                 </DataListItemRow>
                 <DataListContent aria-label="Alert details">
-                  {/* TODO: cmdline is not in spec */}
-                  <pre>{a.cmdline}</pre>
+                  <ProcessTree eppAlert={a} />
                 </DataListContent>
               </DataListItem>
             );

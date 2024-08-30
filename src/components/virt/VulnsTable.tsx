@@ -29,6 +29,7 @@ export default function VulnsTable({ client, deviceId }) {
         'remediation',
       ])
       .then((resp) => {
+        //TODO: handle pagination
         setVulns(resp['resources']);
       })
       .catch((err) => {

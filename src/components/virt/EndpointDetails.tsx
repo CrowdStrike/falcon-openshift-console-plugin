@@ -42,20 +42,18 @@ export default function EndpointDetails({ client, deviceId }) {
   function detail(name, value, desc?) {
     return (
       <>
-        <DescriptionList>
-          <DescriptionListGroup>
-            {desc ? (
-              <DescriptionListTermHelpText>
-                <Popover headerContent={<div>{name}</div>} bodyContent={<div>{desc}</div>}>
-                  <DescriptionListTermHelpTextButton>{name}</DescriptionListTermHelpTextButton>
-                </Popover>
-              </DescriptionListTermHelpText>
-            ) : (
-              <DescriptionListTerm>{name}</DescriptionListTerm>
-            )}
-            <DescriptionListDescription>{value}</DescriptionListDescription>
-          </DescriptionListGroup>
-        </DescriptionList>
+        <DescriptionListGroup>
+          {desc ? (
+            <DescriptionListTermHelpText>
+              <Popover headerContent={<div>{name}</div>} bodyContent={<div>{desc}</div>}>
+                <DescriptionListTermHelpTextButton>{name}</DescriptionListTermHelpTextButton>
+              </Popover>
+            </DescriptionListTermHelpText>
+          ) : (
+            <DescriptionListTerm>{name}</DescriptionListTerm>
+          )}
+          <DescriptionListDescription>{value}</DescriptionListDescription>
+        </DescriptionListGroup>
       </>
     );
   }
@@ -72,11 +70,11 @@ export default function EndpointDetails({ client, deviceId }) {
               <Skeleton width="75%"></Skeleton>
             </>
           ) : (
-            <>
+            <DescriptionList>
               {detail('Hostname', host.hostname)}
               {detail('Operating system', host.osVersion)}
               {detail('Kernel', host.kernelVersion)}
-            </>
+            </DescriptionList>
           )}
         </GridItem>
         <GridItem span={6}>
@@ -85,7 +83,7 @@ export default function EndpointDetails({ client, deviceId }) {
               <Skeleton width="75%"></Skeleton>
             </>
           ) : (
-            <>
+            <DescriptionList>
               {detail(
                 'Device ID',
                 host.deviceId,
@@ -110,7 +108,7 @@ export default function EndpointDetails({ client, deviceId }) {
                   </>
                 ),
               )}
-            </>
+            </DescriptionList>
           )}
         </GridItem>
         <GridItem span={12}>
