@@ -24,10 +24,13 @@ export default function VulnsTable({ client, deviceId }) {
     if (!client || !deviceId) return;
 
     client.spotlightVulnerabilities
-      .combinedQueryVulnerabilities(`aid:'${deviceId}'`, undefined, undefined, undefined, [
-        'cve',
-        'remediation',
-      ])
+      .combinedQueryVulnerabilities(
+        `aid:'${deviceId}'+(cve.severity:'CRITICAL',cve.severity:'HIGH')+cve.remediation_level:'O'`,
+        undefined,
+        1000,
+        undefined,
+        ['cve', 'remediation'],
+      )
       .then((resp) => {
         //TODO: handle pagination
         setVulns(resp['resources']);
@@ -69,7 +72,6 @@ export default function VulnsTable({ client, deviceId }) {
     // sort individual vulns by baseScore desc
     for (let g in grouped) {
       grouped[g].vulns.sort((a, b) => {
-        console.log(b.cve.baseScore, a.cve.baseScore);
         return b.cve.baseScore - a.cve.baseScore;
       });
     }
@@ -84,7 +86,8 @@ export default function VulnsTable({ client, deviceId }) {
 
   return (
     <>
-      <Title headingLevel="h2">Vulnerabilities</Title>
+      <Title headingLevel="h2">Top vulnerabilities</Title>
+      <p>Displaying remediable vulnerabilities with a critical or high severity.</p>
       {error && (
         <Alert variant="warning" title="Something went wrong">
           {error}
@@ -100,13 +103,18 @@ export default function VulnsTable({ client, deviceId }) {
                 <DataListItemRow>
                   <DataListItemCells
                     dataListCells={[
-                      <DataListCell>{g.app.productNameNormalized}</DataListCell>,
+                      <DataListCell>{g.app.productNameVersion}</DataListCell>,
                       <DataListCell>
-                        {g.counts.critical > 0 ? (
-                          <SeverityLabel name="critical" text={g.maxBaseScore} />
-                        ) : (
-                          <>{g.maxBaseScore}</>
-                        )}
+                        <SeverityLabel
+                          name="critical"
+                          text={g.counts.critical}
+                          showColor={g.counts.critical > 0}
+                        />{' '}
+                        <SeverityLabel
+                          name="high"
+                          text={g.counts.high}
+                          showColor={g.counts.high > 0}
+                        />
                       </DataListCell>,
                     ]}
                   />
@@ -116,8 +124,10 @@ export default function VulnsTable({ client, deviceId }) {
                     <Thead>
                       <Tr>
                         <Th>CVE</Th>
-                        <Th>Base Score</Th>
-                        <Th>Severity</Th>
+                        <Th>NVD Base Score</Th>
+                        <Th>NVD Severity</Th>
+                        <Th>ExPRT Rating</Th>
+                        <Th>Remediation</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -128,6 +138,14 @@ export default function VulnsTable({ client, deviceId }) {
                             <Td>{v.cve.baseScore}</Td>
                             <Td>
                               <SeverityLabel name={v.cve.severity} />
+                            </Td>
+                            <Td>
+                              <SeverityLabel name={v.cve.exprtRating} />
+                            </Td>
+                            <Td>
+                              {v.remediation.entities &&
+                                v.remediation.entities.length > 0 &&
+                                v.remediation.entities[0].action}
                             </Td>
                           </Tr>
                         );
