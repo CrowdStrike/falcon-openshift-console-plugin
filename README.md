@@ -1,3 +1,7 @@
+<div style="text-align: center;">
+   <img src="img/crowdstrike.png" alt="CrowdStrike logo" width="500"/>
+</div>
+
 # Falcon OpenShift Console Plugin
 
 This is a dynamic plugin for the Red Hat OpenShift console. The plugin provides additional visibility
