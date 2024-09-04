@@ -45,9 +45,9 @@ export default function VulnsTable({ client, deviceId }) {
 
   React.useEffect(() => {
     if (!vulns) return;
-    let grouped = {};
+    const grouped = {};
     // put all the vulns together under the app name
-    for (let v of vulns) {
+    for (const v of vulns) {
       //TODO: when would there be multiple apps?
       const app = v.apps[0].productNameNormalized;
       if (!(app in grouped)) {
@@ -70,13 +70,13 @@ export default function VulnsTable({ client, deviceId }) {
       }
     }
     // sort individual vulns by baseScore desc
-    for (let g in grouped) {
+    for (const g in grouped) {
       grouped[g].vulns.sort((a, b) => {
         return b.cve.baseScore - a.cve.baseScore;
       });
     }
     // sort groups by maxBaseScore desc
-    let sorted = Object.values(grouped);
+    const sorted = Object.values(grouped);
     sorted.sort((a, b) => {
       return b['maxBaseScore'] - a['maxBaseScore'];
     });

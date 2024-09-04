@@ -75,7 +75,7 @@ export default function DetectionsTable({ client, deviceId }) {
                     id="detailsLink"
                   >
                     {/* TODO: falcon_host_link not present in ExternalAlert spec but is returned by Alerts API */}
-                    <a href={a.falcon_host_link} target="_blank">
+                    <a href={a.falcon_host_link} target="_blank" rel="noreferrer">
                       <Icon size="md">
                         <ExternalLinkAltIcon />
                       </Icon>

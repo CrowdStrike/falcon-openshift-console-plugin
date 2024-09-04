@@ -23,7 +23,7 @@ export default function PodDetails({ obj }) {
         <Td>{d.action}</Td>
         <Td>{d.date.toDateString()}</Td>
         <Td>
-          <a href={d.details} target="_blank">
+          <a href={d.details} target="_blank" rel="noreferrer">
             <Icon size="md">
               <ExternalLinkAltIcon />
             </Icon>

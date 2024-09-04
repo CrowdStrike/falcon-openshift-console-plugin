@@ -24,13 +24,13 @@ export default function ProcessTree({ eppAlert }) {
   let options = [makeTreeItem(eppAlert)];
 
   if (eppAlert.parent_details) {
-    let parent = makeTreeItem(eppAlert.parent_details);
+    const parent = makeTreeItem(eppAlert.parent_details);
     parent.children = options;
     options = [parent];
   }
 
   if (eppAlert.grandparent_details) {
-    let grandparent = makeTreeItem(eppAlert.grandparent_details);
+    const grandparent = makeTreeItem(eppAlert.grandparent_details);
     grandparent.children = options;
     options = [grandparent];
   }
