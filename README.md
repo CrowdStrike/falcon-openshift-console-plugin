@@ -1,6 +1,6 @@
-<div style="text-align: center;">
+<p align="center">
    <img src="img/crowdstrike.png" alt="CrowdStrike logo" width="500"/>
-</div>
+</p>
 
 # Falcon OpenShift Console Plugin
 
