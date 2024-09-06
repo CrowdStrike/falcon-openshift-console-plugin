@@ -7,6 +7,7 @@ import {
   DataListItem,
   DataListItemCells,
   DataListItemRow,
+  DataListToggle,
   Icon,
   Skeleton,
   Title,
@@ -20,6 +21,7 @@ export default function DetectionsTable({ client, deviceId }) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
   const [alerts, setAlerts] = React.useState([]);
+  const [expanded, setExpanded] = React.useState([]);
 
   React.useEffect(() => {
     if (!client || !deviceId) return;
@@ -28,6 +30,8 @@ export default function DetectionsTable({ client, deviceId }) {
       .getQueriesAlertsV1(0, undefined, undefined, `device.device_id:'${deviceId}'`)
       .then((resp) => {
         if (resp['resources'].length == 0) return;
+        // expand the details for the most recent detection
+        setExpanded([resp['resources'][0]]);
         return client.alerts.getV2({
           compositeIds: resp['resources'],
         });
@@ -43,9 +47,20 @@ export default function DetectionsTable({ client, deviceId }) {
       });
   }, [client, deviceId]);
 
+  function toggle(id: string) {
+    const index = expanded.indexOf(id);
+    const newExpanded =
+      index >= 0
+        ? [...expanded.slice(0, index), ...expanded.slice(index + 1, expanded.length)]
+        : [...expanded, id];
+    setExpanded(newExpanded);
+  }
+
   return (
     <>
-      <Title headingLevel="h2">Recent detections</Title>
+      <Title headingLevel="h2" className="co-section-heading">
+        Recent detections
+      </Title>
       {error && (
         <Alert variant="warning" title="Something went wrong">
           {error}
@@ -57,8 +72,13 @@ export default function DetectionsTable({ client, deviceId }) {
         <DataList aria-label="Endpoint alerts">
           {alerts.map((a) => {
             return (
-              <DataListItem>
+              <DataListItem isExpanded={expanded.includes(a.compositeId)}>
                 <DataListItemRow>
+                  <DataListToggle
+                    onClick={() => toggle(a.compositeId)}
+                    isExpanded={expanded.includes(a.compositeId)}
+                    id={a.compositeId}
+                  />
                   <DataListItemCells
                     dataListCells={[
                       <DataListCell width={4}>{a.description}</DataListCell>,
@@ -82,7 +102,11 @@ export default function DetectionsTable({ client, deviceId }) {
                     </a>
                   </DataListAction>
                 </DataListItemRow>
-                <DataListContent aria-label="Alert details">
+                <DataListContent
+                  aria-label="Alert details"
+                  isHidden={!expanded.includes(a.compositeId)}
+                >
+                  <Title headingLevel="h5">Process tree</Title>
                   <ProcessTree eppAlert={a} />
                 </DataListContent>
               </DataListItem>

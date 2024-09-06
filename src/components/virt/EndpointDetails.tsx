@@ -1,14 +1,19 @@
 import {
+  Button,
+  ClipboardCopy,
+  CodeBlock,
+  CodeBlockCode,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
   DescriptionListTermHelpText,
   DescriptionListTermHelpTextButton,
-  ExpandableSection,
   Grid,
   GridItem,
   Icon,
+  Modal,
+  ModalVariant,
   Popover,
   Skeleton,
   Title,
@@ -35,8 +40,8 @@ export default function EndpointDetails({ client, deviceId }) {
       });
   }, [client, deviceId]);
 
-  const onRawToggle = (_event: React.MouseEvent, isExpanded: boolean) => {
-    setIsRawExpanded(isExpanded);
+  const toggleIsRawExpanded = () => {
+    setIsRawExpanded(!isRawExpanded);
   };
 
   function detail(name, value, desc?) {
@@ -60,9 +65,26 @@ export default function EndpointDetails({ client, deviceId }) {
 
   return (
     <>
+      <Modal
+        title="Raw endpoint details"
+        isOpen={isRawExpanded}
+        onClose={toggleIsRawExpanded}
+        variant={ModalVariant.medium}
+      >
+        <CodeBlock>
+          <CodeBlockCode>{JSON.stringify(host, null, 2)}</CodeBlockCode>
+        </CodeBlock>
+      </Modal>
       <Grid>
         <GridItem span={12}>
-          <Title headingLevel="h2">Endpoint details</Title>
+          <Title headingLevel="h2" className="co-section-heading">
+            Endpoint details
+            {!loading && (
+              <Button onClick={toggleIsRawExpanded} variant="link">
+                Show raw details
+              </Button>
+            )}
+          </Title>
         </GridItem>
         <GridItem span={6}>
           {loading ? (
@@ -86,7 +108,9 @@ export default function EndpointDetails({ client, deviceId }) {
             <DescriptionList>
               {detail(
                 'Device ID',
-                host.deviceId,
+                <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
+                  {host.deviceId}
+                </ClipboardCopy>,
                 'The Device ID may also be referred to as the Host ID, Asset ID, Agent ID, or AID.',
               )}
               {detail('Sensor version', host.agentVersion)}
@@ -110,15 +134,6 @@ export default function EndpointDetails({ client, deviceId }) {
               )}
             </DescriptionList>
           )}
-        </GridItem>
-        <GridItem span={12}>
-          <ExpandableSection
-            toggleText={isRawExpanded ? 'Hide full host details' : 'Show full host details'}
-            onToggle={onRawToggle}
-            isExpanded={isRawExpanded}
-          >
-            <pre>{JSON.stringify(host, null, 2)}</pre>
-          </ExpandableSection>
         </GridItem>
       </Grid>
     </>

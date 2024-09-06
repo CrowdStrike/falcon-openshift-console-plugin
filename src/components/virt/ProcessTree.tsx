@@ -10,7 +10,7 @@ function makeTreeItem(processDetails) {
 
 function makeProcessTreeUl(options) {
   return (
-    <ul>
+    <ul style={{ listStyleType: "'∟'" }}>
       <li>
         <pre>{options[0].name}</pre>
         {options[0].children.length > 0 && makeProcessTreeUl(options[0].children)}

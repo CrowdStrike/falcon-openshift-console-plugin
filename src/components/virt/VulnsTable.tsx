@@ -6,6 +6,7 @@ import {
   DataListItem,
   DataListItemCells,
   DataListItemRow,
+  DataListToggle,
   Skeleton,
   Title,
 } from '@patternfly/react-core';
@@ -19,6 +20,7 @@ export default function VulnsTable({ client, deviceId }) {
   const [error, setError] = React.useState('');
   const [vulns, setVulns] = React.useState<DomainBaseAPIVulnerabilityV2[]>();
   const [groupedVulns, setGroupedVulns] = React.useState([]);
+  const [expanded, setExpanded] = React.useState([]);
 
   React.useEffect(() => {
     if (!client || !deviceId) return;
@@ -84,10 +86,23 @@ export default function VulnsTable({ client, deviceId }) {
     setGroupedVulns(sorted);
   }, [vulns]);
 
+  function toggle(id: string) {
+    const index = expanded.indexOf(id);
+    const newExpanded =
+      index >= 0
+        ? [...expanded.slice(0, index), ...expanded.slice(index + 1, expanded.length)]
+        : [...expanded, id];
+    setExpanded(newExpanded);
+  }
+
   return (
     <>
-      <Title headingLevel="h2">Top vulnerabilities</Title>
-      <p>Displaying remediable vulnerabilities with a critical or high severity.</p>
+      <Title headingLevel="h2" className="co-section-heading">
+        Top vulnerabilities
+      </Title>
+      <p style={{ marginBlockEnd: '14px' }}>
+        Displaying remediable vulnerabilities with a critical or high severity.
+      </p>
       {error && (
         <Alert variant="warning" title="Something went wrong">
           {error}
@@ -99,8 +114,13 @@ export default function VulnsTable({ client, deviceId }) {
         <DataList aria-label="Vulnerabilities">
           {groupedVulns.map((g) => {
             return (
-              <DataListItem>
+              <DataListItem isExpanded={expanded.includes(g.app.productNameNormalized)}>
                 <DataListItemRow>
+                  <DataListToggle
+                    onClick={() => toggle(g.app.productNameNormalized)}
+                    isExpanded={expanded.includes(g.app.productNameNormalized)}
+                    id={g.app.productNameNormalized}
+                  />
                   <DataListItemCells
                     dataListCells={[
                       <DataListCell>{g.app.productNameVersion}</DataListCell>,
@@ -119,7 +139,10 @@ export default function VulnsTable({ client, deviceId }) {
                     ]}
                   />
                 </DataListItemRow>
-                <DataListContent aria-label="Vulnerability details">
+                <DataListContent
+                  aria-label="Vulnerability details"
+                  isHidden={!expanded.includes(g.app.productNameNormalized)}
+                >
                   <Table variant="compact">
                     <Thead>
                       <Tr>
