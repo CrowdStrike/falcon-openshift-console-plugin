@@ -4,6 +4,7 @@ import { Page, PageSection, Title, Grid, GridItem } from '@patternfly/react-core
 import { useK8sModel, k8sGet, K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 import DeploymentStatusCard from './DeploymentStatusCard';
 import NodeCoverageCard from './NodeCoverageCard';
+import '../missing-pf-styles.css';
 
 export default function OperatorOverview() {
   const [fnsModel] = useK8sModel({

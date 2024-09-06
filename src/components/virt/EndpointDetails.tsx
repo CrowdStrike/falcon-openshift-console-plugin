@@ -87,7 +87,7 @@ export default function EndpointDetails({ client, deviceId }) {
               {detail(
                 'Device ID',
                 host.deviceId,
-                'The Device ID may also be referred to as the Agent ID or simply AID.',
+                'The Device ID may also be referred to as the Host ID, Asset ID, Agent ID, or AID.',
               )}
               {detail('Sensor version', host.agentVersion)}
               {detail(

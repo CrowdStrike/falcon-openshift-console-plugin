@@ -8,16 +8,13 @@ import {
   DescriptionListTerm,
   DescriptionListDescription,
   Spinner,
-  Title,
 } from '@patternfly/react-core';
 
 export default function DeploymentStatusCard({ falconNodeSensor, daemonSet }) {
   return (
     <>
       <Card>
-        <CardTitle>
-          <Title headingLevel="h3">Sensor deployment</Title>
-        </CardTitle>
+        <CardTitle>Sensor deployment</CardTitle>
         <CardBody>
           <DescriptionList>
             <DescriptionListGroup>

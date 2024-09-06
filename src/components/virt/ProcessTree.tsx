@@ -1,4 +1,3 @@
-// import { TreeView } from '@patternfly/react-core';
 import * as React from 'react';
 
 function makeTreeItem(processDetails) {
@@ -34,9 +33,6 @@ export default function ProcessTree({ eppAlert }) {
     grandparent.children = options;
     options = [grandparent];
   }
-
-  //FIXME: styling is not correct, skipping TreeView in favor of a basic list for now
-  // return <TreeView data={options} allExpanded={true} hasSelectableNodes={false} hasGuides={true} />;
 
   return makeProcessTreeUl(options);
 }

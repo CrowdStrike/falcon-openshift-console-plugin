@@ -14,6 +14,7 @@ import { k8sGet, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import DetectionsTable from './DetectionsTable';
 import NoAgent from './NoAgent';
 import VulnsTable from './VulnsTable';
+import '../missing-pf-styles.css';
 
 export default function VirtualMachineTab({ obj }) {
   const [loading, setLoading] = React.useState(true);
@@ -75,33 +76,37 @@ export default function VirtualMachineTab({ obj }) {
 
   return (
     <>
-      <PageSection variant="light">
-        {error && (
-          <Alert variant="danger" title="Something went wrong">
-            {error}
-          </Alert>
-        )}
+      {error && (
+        <Alert variant="danger" title="Something went wrong">
+          {error}
+        </Alert>
+      )}
 
-        {loading && (
-          <EmptyState variant={EmptyStateVariant.lg}>
-            <EmptyStateHeader
-              titleText="Looking for agent"
-              headingLevel="h4"
-              icon={<EmptyStateIcon icon={Spinner} />}
-            />
-          </EmptyState>
-        )}
+      {loading && (
+        <EmptyState variant={EmptyStateVariant.lg}>
+          <EmptyStateHeader
+            titleText="Looking for agent"
+            headingLevel="h4"
+            icon={<EmptyStateIcon icon={Spinner} />}
+          />
+        </EmptyState>
+      )}
 
-        {deviceId && (
-          <>
+      {!loading && !error && !deviceId && <NoAgent />}
+
+      {deviceId && (
+        <>
+          <PageSection variant="light">
             <EndpointDetails client={client} deviceId={deviceId} />
+          </PageSection>
+          <PageSection variant="light">
             <DetectionsTable client={client} deviceId={deviceId} />
+          </PageSection>
+          <PageSection variant="light">
             <VulnsTable client={client} deviceId={deviceId} />
-          </>
-        )}
-
-        {!loading && !error && !deviceId && <NoAgent />}
-      </PageSection>
+          </PageSection>
+        </>
+      )}
     </>
   );
 }

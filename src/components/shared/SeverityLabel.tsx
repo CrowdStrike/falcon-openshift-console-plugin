@@ -1,4 +1,5 @@
 import { Label } from '@patternfly/react-core';
+import { CriticalRiskIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 
 export default function SeverityLabel({ name, text = null, showIcon = true, showColor = true }) {
@@ -13,9 +14,8 @@ export default function SeverityLabel({ name, text = null, showIcon = true, show
   };
 
   const icons = {
-    //TODO: PF critical icon isn't displayed
-    // critical: 'pf-v5-pficon pf-v5-pficon-critical-risk',
-    critical: 'fas fa-exclamation-triangle',
+    //TODO: PF critical icon isn't displayed correctly, see workaround below
+    // critical: 'pf-v5-pficon pf-v5-pficon-critical-risk'
     high: 'fas fa-angle-double-up',
     medium: 'fas fa-equals',
     low: 'fas fa-angle-double-down',
@@ -23,14 +23,21 @@ export default function SeverityLabel({ name, text = null, showIcon = true, show
   };
 
   const color = showColor && n in colors ? colors[n] : null;
-  const iconElement =
-    showIcon && n in icons ? (
+  let iconElement = null;
+
+  if (showIcon && n in icons) {
+    iconElement = (
       <span className="pf-v5-c-icon">
         <span className="pf-v5-c-icon__content">
           <i className={icons[n]}></i>
         </span>
       </span>
-    ) : null;
+    );
+  } else if (showIcon && n == 'critical') {
+    // workaround as adding "critical: 'pf-v5-pficon pf-v5-pficon-critical-risk'" to icons dict
+    // doesn't correctly display the critical risk icon
+    iconElement = <CriticalRiskIcon />;
+  }
 
   function capitalize(s: string) {
     if (s && s.length >= 2) {

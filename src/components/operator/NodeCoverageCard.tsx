@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardBody, CardTitle, Spinner, Title } from '@patternfly/react-core';
+import { Card, CardBody, CardTitle, Spinner } from '@patternfly/react-core';
 import { ChartDonut } from '@patternfly/react-charts';
 import { k8sGet, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 
@@ -38,9 +38,7 @@ export default function NodeCoverageCard({ daemonSet }) {
   const coverageColorScale = ['#6a6e73', '#8bc1f7', '#06c'];
   return (
     <Card>
-      <CardTitle>
-        <Title headingLevel="h3">Sensor coverage</Title>
-      </CardTitle>
+      <CardTitle>Sensor coverage</CardTitle>
       <CardBody>
         {loading ? (
           <Spinner />
