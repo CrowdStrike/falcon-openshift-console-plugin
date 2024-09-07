@@ -1,5 +1,8 @@
 import {
   Alert,
+  Card,
+  CardBody,
+  CardTitle,
   DataList,
   DataListCell,
   DataListContent,
@@ -8,7 +11,6 @@ import {
   DataListItemRow,
   DataListToggle,
   Skeleton,
-  Title,
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { DomainBaseAPIVulnerabilityV2 } from 'crowdstrike-falcon/dist/models';
@@ -96,92 +98,92 @@ export default function VulnsTable({ client, deviceId }) {
   }
 
   return (
-    <>
-      <Title headingLevel="h2" className="co-section-heading">
-        Top vulnerabilities
-      </Title>
-      <p style={{ marginBlockEnd: '14px' }}>
-        Displaying remediable vulnerabilities with a critical or high severity.
-      </p>
-      {error && (
-        <Alert variant="warning" title="Something went wrong">
-          {error}
-        </Alert>
-      )}
-      {loading ? (
-        <Skeleton />
-      ) : (
-        <DataList aria-label="Vulnerabilities">
-          {groupedVulns.map((g) => {
-            return (
-              <DataListItem isExpanded={expanded.includes(g.app.productNameNormalized)}>
-                <DataListItemRow>
-                  <DataListToggle
-                    onClick={() => toggle(g.app.productNameNormalized)}
-                    isExpanded={expanded.includes(g.app.productNameNormalized)}
-                    id={g.app.productNameNormalized}
-                  />
-                  <DataListItemCells
-                    dataListCells={[
-                      <DataListCell>{g.app.productNameVersion}</DataListCell>,
-                      <DataListCell>
-                        <SeverityLabel
-                          name="critical"
-                          text={g.counts.critical}
-                          showColor={g.counts.critical > 0}
-                        />{' '}
-                        <SeverityLabel
-                          name="high"
-                          text={g.counts.high}
-                          showColor={g.counts.high > 0}
-                        />
-                      </DataListCell>,
-                    ]}
-                  />
-                </DataListItemRow>
-                <DataListContent
-                  aria-label="Vulnerability details"
-                  isHidden={!expanded.includes(g.app.productNameNormalized)}
-                >
-                  <Table variant="compact">
-                    <Thead>
-                      <Tr>
-                        <Th>CVE</Th>
-                        <Th>NVD Base Score</Th>
-                        <Th>NVD Severity</Th>
-                        <Th>ExPRT Rating</Th>
-                        <Th>Remediation</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {g.vulns.map((v) => {
-                        return (
-                          <Tr>
-                            <Td>{v.cve.id}</Td>
-                            <Td>{v.cve.baseScore}</Td>
-                            <Td>
-                              <SeverityLabel name={v.cve.severity} />
-                            </Td>
-                            <Td>
-                              <SeverityLabel name={v.cve.exprtRating} />
-                            </Td>
-                            <Td>
-                              {v.remediation.entities &&
-                                v.remediation.entities.length > 0 &&
-                                v.remediation.entities[0].action}
-                            </Td>
-                          </Tr>
-                        );
-                      })}
-                    </Tbody>
-                  </Table>
-                </DataListContent>
-              </DataListItem>
-            );
-          })}
-          {/* TODO: what to show if there are no alerts reported (yet?) */}
-        </DataList>
-      )}
-    </>
+    <Card>
+      <CardTitle>Top vulnerabilities</CardTitle>
+      <CardBody>
+        <p style={{ marginBlockEnd: '14px' }}>
+          Displaying remediable vulnerabilities with a critical or high severity.
+        </p>
+        {error && (
+          <Alert variant="warning" title="Something went wrong">
+            {error}
+          </Alert>
+        )}
+        {loading ? (
+          <Skeleton />
+        ) : (
+          <DataList aria-label="Vulnerabilities">
+            {groupedVulns.map((g) => {
+              return (
+                <DataListItem isExpanded={expanded.includes(g.app.productNameNormalized)}>
+                  <DataListItemRow>
+                    <DataListToggle
+                      onClick={() => toggle(g.app.productNameNormalized)}
+                      isExpanded={expanded.includes(g.app.productNameNormalized)}
+                      id={g.app.productNameNormalized}
+                    />
+                    <DataListItemCells
+                      dataListCells={[
+                        <DataListCell>{g.app.productNameVersion}</DataListCell>,
+                        <DataListCell>
+                          <SeverityLabel
+                            name="critical"
+                            text={g.counts.critical}
+                            showColor={g.counts.critical > 0}
+                          />{' '}
+                          <SeverityLabel
+                            name="high"
+                            text={g.counts.high}
+                            showColor={g.counts.high > 0}
+                          />
+                        </DataListCell>,
+                      ]}
+                    />
+                  </DataListItemRow>
+                  <DataListContent
+                    aria-label="Vulnerability details"
+                    isHidden={!expanded.includes(g.app.productNameNormalized)}
+                  >
+                    <Table variant="compact">
+                      <Thead>
+                        <Tr>
+                          <Th>CVE</Th>
+                          <Th>NVD Base Score</Th>
+                          <Th>NVD Severity</Th>
+                          <Th>ExPRT Rating</Th>
+                          <Th>Remediation</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {g.vulns.map((v) => {
+                          return (
+                            <Tr>
+                              <Td>{v.cve.id}</Td>
+                              <Td>{v.cve.baseScore}</Td>
+                              <Td>
+                                <SeverityLabel name={v.cve.severity} />
+                              </Td>
+                              <Td>
+                                <SeverityLabel name={v.cve.exprtRating} />
+                              </Td>
+                              <Td>
+                                {v.remediation.entities &&
+                                  v.remediation.entities.length > 0 &&
+                                  v.remediation.entities[0].action}
+                              </Td>
+                            </Tr>
+                          );
+                        })}
+                      </Tbody>
+                    </Table>
+                  </DataListContent>
+                </DataListItem>
+              );
+            })}
+            {/* TODO: what to show if there are no alerts reported (yet?) */}
+          </DataList>
+        )}
+      </CardBody>
+    </Card>
   );
 }

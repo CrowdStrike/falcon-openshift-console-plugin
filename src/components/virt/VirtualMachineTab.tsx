@@ -1,9 +1,15 @@
 import {
   Alert,
+  Card,
+  CardBody,
+  CardTitle,
   EmptyState,
   EmptyStateHeader,
   EmptyStateIcon,
   EmptyStateVariant,
+  Gallery,
+  Grid,
+  GridItem,
   PageSection,
   Spinner,
 } from '@patternfly/react-core';
@@ -15,6 +21,8 @@ import DetectionsTable from './DetectionsTable';
 import NoAgent from './NoAgent';
 import VulnsTable from './VulnsTable';
 import '../missing-pf-styles.css';
+import './style.css';
+import HealthItem from './HealthItem';
 
 export default function VirtualMachineTab({ obj }) {
   const [loading, setLoading] = React.useState(true);
@@ -96,14 +104,43 @@ export default function VirtualMachineTab({ obj }) {
 
       {deviceId && (
         <>
-          <PageSection variant="light">
-            <EndpointDetails client={client} deviceId={deviceId} />
-          </PageSection>
-          <PageSection variant="light">
-            <DetectionsTable client={client} deviceId={deviceId} />
-          </PageSection>
-          <PageSection variant="light">
-            <VulnsTable client={client} deviceId={deviceId} />
+          <PageSection isFilled>
+            <Grid hasGutter>
+              <GridItem span={12}>
+                <Card>
+                  <CardTitle>Security overview</CardTitle>
+                  <CardBody>
+                    <Gallery hasGutter>
+                      <HealthItem
+                        status="success"
+                        title="Sensor health"
+                        reason="Operating normally"
+                      />
+                      <HealthItem
+                        status="danger"
+                        title="Malicious activity"
+                        reason="Critical events detected"
+                      />
+                      <HealthItem
+                        status="warning"
+                        title="Vulnerabilities"
+                        reason="Remediations available"
+                      />
+                      <HealthItem title="Compliance" reason="No profile configured" />
+                    </Gallery>
+                  </CardBody>
+                </Card>
+              </GridItem>
+              <GridItem lg={4} md={12}>
+                <EndpointDetails client={client} deviceId={deviceId} />
+              </GridItem>
+              <GridItem lg={8} md={12}>
+                <DetectionsTable client={client} deviceId={deviceId} />
+              </GridItem>
+              <GridItem span={12}>
+                <VulnsTable client={client} deviceId={deviceId} />
+              </GridItem>
+            </Grid>
           </PageSection>
         </>
       )}
