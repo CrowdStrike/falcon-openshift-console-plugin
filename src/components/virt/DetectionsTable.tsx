@@ -17,11 +17,16 @@ import {
   DescriptionListTerm,
   DescriptionListTermHelpText,
   DescriptionListTermHelpTextButton,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  EmptyStateVariant,
   Icon,
   Popover,
   Skeleton,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { CheckIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import SeverityLabel from '../shared/SeverityLabel';
 import ProcessTree from './ProcessTree';
@@ -37,7 +42,8 @@ export default function DetectionsTable({ client, deviceId, alerts, setAlerts })
     client.alerts
       .getQueriesAlertsV1(0, undefined, undefined, `device.device_id:'${deviceId}'`)
       .then((resp) => {
-        if (resp['resources'].length == 0) return;
+        // if no alert ID's, return a fake response with no alerts
+        if (resp['resources'].length == 0) return { resources: [] };
         // expand the details for the most recent detection
         setExpanded([resp['resources'][0]]);
         return client.alerts.getV2({
@@ -49,6 +55,7 @@ export default function DetectionsTable({ client, deviceId, alerts, setAlerts })
       })
       .catch((err) => {
         setError(err.message);
+        console.log(err);
       })
       .finally(() => {
         setLoading(false);
@@ -67,15 +74,14 @@ export default function DetectionsTable({ client, deviceId, alerts, setAlerts })
   return (
     <Card>
       <CardTitle>Recent detections</CardTitle>
-      {error && (
-        <Alert variant="warning" title="Something went wrong">
-          {error}
-        </Alert>
-      )}
       <CardBody>
-        {loading ? (
-          <Skeleton />
-        ) : (
+        {error && (
+          <Alert variant="warning" title="Something went wrong">
+            {error}
+          </Alert>
+        )}
+        {loading && <Skeleton />}
+        {!loading && !error && alerts && alerts.length > 0 && (
           <DataList aria-label="Endpoint alerts">
             {alerts.map((a) => {
               return (
@@ -149,8 +155,21 @@ export default function DetectionsTable({ client, deviceId, alerts, setAlerts })
                 </DataListItem>
               );
             })}
-            {/* TODO: what to show if there are no alerts reported (yet?) */}
           </DataList>
+        )}
+        {!loading && !error && alerts && alerts.length == 0 && (
+          <EmptyState variant={EmptyStateVariant.xs}>
+            <EmptyStateHeader
+              titleText="No recent detections"
+              icon={<EmptyStateIcon icon={CheckIcon} />}
+            />
+            <EmptyStateBody>
+              <p>
+                The Falcon sensor has not detected any malicious or suspicious behavior on this
+                host.
+              </p>
+            </EmptyStateBody>
+          </EmptyState>
         )}
       </CardBody>
     </Card>

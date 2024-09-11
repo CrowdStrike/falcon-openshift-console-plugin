@@ -31,8 +31,8 @@ export default function VirtualMachineTab({ obj }) {
   const [client, setClient] = React.useState<FalconClient>(null);
   const [deviceId, setDeviceId] = React.useState('');
   const [host, setHost] = React.useState<DeviceapiDeviceSwagger>(null);
-  const [alerts, setAlerts] = React.useState<DetectsExternalAlert[]>([]);
-  const [vulns, setVulns] = React.useState<DomainBaseAPIVulnerabilityV2[]>();
+  const [alerts, setAlerts] = React.useState<DetectsExternalAlert[]>(null);
+  const [vulns, setVulns] = React.useState<DomainBaseAPIVulnerabilityV2[]>(null);
 
   const [secretModel] = useK8sModel({
     version: 'v1',
@@ -111,7 +111,7 @@ export default function VirtualMachineTab({ obj }) {
           <PageSection isFilled>
             <Grid hasGutter>
               <GridItem span={12}>
-                <SecurityOverview />
+                <SecurityOverview host={host} alerts={alerts} vulns={vulns} />
               </GridItem>
               <GridItem lg={4} md={12}>
                 <EndpointDetails

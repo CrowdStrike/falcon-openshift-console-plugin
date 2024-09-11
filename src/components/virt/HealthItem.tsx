@@ -6,7 +6,7 @@ import {
 } from '@patternfly/react-icons';
 import * as React from 'react';
 
-export default function HealthItem({ status = null, title, reason }) {
+export default function HealthItem({ status = null, title, reason = null, isInProgress = false }) {
   let icon = <i className="fas fa-minus"></i>;
   if (status == 'success') {
     icon = <CheckCircleIcon />;
@@ -18,7 +18,7 @@ export default function HealthItem({ status = null, title, reason }) {
   return (
     <GalleryItem className="crwd-health-item">
       <div>
-        <Icon status={status} size="lg">
+        <Icon status={status} isInProgress={isInProgress} size="lg">
           {icon}
         </Icon>
       </div>

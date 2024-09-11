@@ -10,11 +10,17 @@ import {
   DataListItemCells,
   DataListItemRow,
   DataListToggle,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  EmptyStateVariant,
   Skeleton,
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import * as React from 'react';
 import SeverityLabel from '../shared/SeverityLabel';
+import { CheckIcon } from '@patternfly/react-icons';
 
 export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
   const [loading, setLoading] = React.useState(true);
@@ -99,87 +105,101 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
     <Card>
       <CardTitle>Top vulnerabilities</CardTitle>
       <CardBody>
-        <p style={{ marginBlockEnd: '14px' }}>
-          Displaying remediable vulnerabilities with a critical or high severity.
-        </p>
         {error && (
           <Alert variant="warning" title="Something went wrong">
             {error}
           </Alert>
         )}
-        {loading ? (
-          <Skeleton />
-        ) : (
-          <DataList aria-label="Vulnerabilities">
-            {groupedVulns.map((g) => {
-              return (
-                <DataListItem isExpanded={expanded.includes(g.app.productNameNormalized)}>
-                  <DataListItemRow>
-                    <DataListToggle
-                      onClick={() => toggle(g.app.productNameNormalized)}
-                      isExpanded={expanded.includes(g.app.productNameNormalized)}
-                      id={g.app.productNameNormalized}
-                    />
-                    <DataListItemCells
-                      dataListCells={[
-                        <DataListCell>{g.app.productNameVersion}</DataListCell>,
-                        <DataListCell>
-                          <SeverityLabel
-                            name="critical"
-                            text={g.counts.critical}
-                            showColor={g.counts.critical > 0}
-                          />{' '}
-                          <SeverityLabel
-                            name="high"
-                            text={g.counts.high}
-                            showColor={g.counts.high > 0}
-                          />
-                        </DataListCell>,
-                      ]}
-                    />
-                  </DataListItemRow>
-                  <DataListContent
-                    aria-label="Vulnerability details"
-                    isHidden={!expanded.includes(g.app.productNameNormalized)}
-                  >
-                    <Table variant="compact">
-                      <Thead>
-                        <Tr>
-                          <Th>CVE</Th>
-                          <Th>NVD Base Score</Th>
-                          <Th>NVD Severity</Th>
-                          <Th>ExPRT Rating</Th>
-                          <Th>Remediation</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {g.vulns.map((v) => {
-                          return (
-                            <Tr>
-                              <Td>{v.cve.id}</Td>
-                              <Td>{v.cve.baseScore}</Td>
-                              <Td>
-                                <SeverityLabel name={v.cve.severity} />
-                              </Td>
-                              <Td>
-                                <SeverityLabel name={v.cve.exprtRating} />
-                              </Td>
-                              <Td>
-                                {v.remediation.entities &&
-                                  v.remediation.entities.length > 0 &&
-                                  v.remediation.entities[0].action}
-                              </Td>
-                            </Tr>
-                          );
-                        })}
-                      </Tbody>
-                    </Table>
-                  </DataListContent>
-                </DataListItem>
-              );
-            })}
-            {/* TODO: what to show if there are no alerts reported (yet?) */}
-          </DataList>
+        {loading && <Skeleton />}
+        {!loading && !error && groupedVulns.length > 0 && (
+          <>
+            <p style={{ marginBlockEnd: '14px' }}>
+              Displaying remediable vulnerabilities with a critical or high severity.
+            </p>
+            <DataList aria-label="Vulnerabilities">
+              {groupedVulns.map((g) => {
+                return (
+                  <DataListItem isExpanded={expanded.includes(g.app.productNameNormalized)}>
+                    <DataListItemRow>
+                      <DataListToggle
+                        onClick={() => toggle(g.app.productNameNormalized)}
+                        isExpanded={expanded.includes(g.app.productNameNormalized)}
+                        id={g.app.productNameNormalized}
+                      />
+                      <DataListItemCells
+                        dataListCells={[
+                          <DataListCell>{g.app.productNameVersion}</DataListCell>,
+                          <DataListCell>
+                            <SeverityLabel
+                              name="critical"
+                              text={g.counts.critical}
+                              showColor={g.counts.critical > 0}
+                            />{' '}
+                            <SeverityLabel
+                              name="high"
+                              text={g.counts.high}
+                              showColor={g.counts.high > 0}
+                            />
+                          </DataListCell>,
+                        ]}
+                      />
+                    </DataListItemRow>
+                    <DataListContent
+                      aria-label="Vulnerability details"
+                      isHidden={!expanded.includes(g.app.productNameNormalized)}
+                    >
+                      <Table variant="compact">
+                        <Thead>
+                          <Tr>
+                            <Th>CVE</Th>
+                            <Th>NVD Base Score</Th>
+                            <Th>NVD Severity</Th>
+                            <Th>ExPRT Rating</Th>
+                            <Th>Remediation</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {g.vulns.map((v) => {
+                            return (
+                              <Tr>
+                                <Td>{v.cve.id}</Td>
+                                <Td>{v.cve.baseScore}</Td>
+                                <Td>
+                                  <SeverityLabel name={v.cve.severity} />
+                                </Td>
+                                <Td>
+                                  <SeverityLabel name={v.cve.exprtRating} />
+                                </Td>
+                                <Td>
+                                  {v.remediation.entities &&
+                                    v.remediation.entities.length > 0 &&
+                                    v.remediation.entities[0].action}
+                                </Td>
+                              </Tr>
+                            );
+                          })}
+                        </Tbody>
+                      </Table>
+                    </DataListContent>
+                  </DataListItem>
+                );
+              })}
+            </DataList>{' '}
+          </>
+        )}
+        {!loading && !error && groupedVulns.length == 0 && (
+          <EmptyState variant={EmptyStateVariant.xs}>
+            <EmptyStateHeader
+              titleText="No vulnerabilities"
+              icon={<EmptyStateIcon icon={CheckIcon} />}
+            />
+            <EmptyStateBody>
+              <p>
+                The Falcon sensor has not found any critical or high vulnerabilities with
+                remediations.
+              </p>
+            </EmptyStateBody>
+          </EmptyState>
         )}
       </CardBody>
     </Card>
