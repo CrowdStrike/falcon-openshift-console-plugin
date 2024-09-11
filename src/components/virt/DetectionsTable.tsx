@@ -26,10 +26,9 @@ import * as React from 'react';
 import SeverityLabel from '../shared/SeverityLabel';
 import ProcessTree from './ProcessTree';
 
-export default function DetectionsTable({ client, deviceId }) {
+export default function DetectionsTable({ client, deviceId, alerts, setAlerts }) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
-  const [alerts, setAlerts] = React.useState([]);
   const [expanded, setExpanded] = React.useState([]);
 
   React.useEffect(() => {

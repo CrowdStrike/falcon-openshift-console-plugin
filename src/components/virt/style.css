@@ -7,6 +7,10 @@ ul.crwd-process-tree-child {
   list-style-type: '∟';
 }
 
+ul.crwd-process-tree-child li::marker {
+  color: #8A8D90;
+}
+
 ul.crwd-process-tree-root pre, ul.crwd-process-tree-child pre {
   text-wrap: wrap;
 }

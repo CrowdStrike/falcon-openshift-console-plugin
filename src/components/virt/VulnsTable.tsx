@@ -13,14 +13,12 @@ import {
   Skeleton,
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { DomainBaseAPIVulnerabilityV2 } from 'crowdstrike-falcon/dist/models';
 import * as React from 'react';
 import SeverityLabel from '../shared/SeverityLabel';
 
-export default function VulnsTable({ client, deviceId }) {
+export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
-  const [vulns, setVulns] = React.useState<DomainBaseAPIVulnerabilityV2[]>();
   const [groupedVulns, setGroupedVulns] = React.useState([]);
   const [expanded, setExpanded] = React.useState([]);
 

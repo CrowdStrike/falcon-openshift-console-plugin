@@ -1,13 +1,9 @@
 import {
   Alert,
-  Card,
-  CardBody,
-  CardTitle,
   EmptyState,
   EmptyStateHeader,
   EmptyStateIcon,
   EmptyStateVariant,
-  Gallery,
   Grid,
   GridItem,
   PageSection,
@@ -15,20 +11,28 @@ import {
 } from '@patternfly/react-core';
 import * as React from 'react';
 import EndpointDetails from './EndpointDetails';
-import { FalconClient } from 'crowdstrike-falcon';
+import {
+  DetectsExternalAlert,
+  DeviceapiDeviceSwagger,
+  DomainBaseAPIVulnerabilityV2,
+  FalconClient,
+} from 'crowdstrike-falcon';
 import { k8sGet, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import DetectionsTable from './DetectionsTable';
 import NoAgent from './NoAgent';
 import VulnsTable from './VulnsTable';
 import '../missing-pf-styles.css';
 import './style.css';
-import HealthItem from './HealthItem';
+import SecurityOverview from './SecurityOverview';
 
 export default function VirtualMachineTab({ obj }) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
   const [client, setClient] = React.useState<FalconClient>(null);
   const [deviceId, setDeviceId] = React.useState('');
+  const [host, setHost] = React.useState<DeviceapiDeviceSwagger>(null);
+  const [alerts, setAlerts] = React.useState<DetectsExternalAlert[]>([]);
+  const [vulns, setVulns] = React.useState<DomainBaseAPIVulnerabilityV2[]>();
 
   const [secretModel] = useK8sModel({
     version: 'v1',
@@ -107,38 +111,26 @@ export default function VirtualMachineTab({ obj }) {
           <PageSection isFilled>
             <Grid hasGutter>
               <GridItem span={12}>
-                <Card>
-                  <CardTitle>Security overview</CardTitle>
-                  <CardBody>
-                    <Gallery hasGutter>
-                      <HealthItem
-                        status="success"
-                        title="Sensor health"
-                        reason="Operating normally"
-                      />
-                      <HealthItem
-                        status="danger"
-                        title="Malicious activity"
-                        reason="Critical events detected"
-                      />
-                      <HealthItem
-                        status="warning"
-                        title="Vulnerabilities"
-                        reason="Remediations available"
-                      />
-                      <HealthItem title="Compliance" reason="No profile configured" />
-                    </Gallery>
-                  </CardBody>
-                </Card>
+                <SecurityOverview />
               </GridItem>
               <GridItem lg={4} md={12}>
-                <EndpointDetails client={client} deviceId={deviceId} />
+                <EndpointDetails
+                  client={client}
+                  deviceId={deviceId}
+                  host={host}
+                  setHost={setHost}
+                />
               </GridItem>
               <GridItem lg={8} md={12}>
-                <DetectionsTable client={client} deviceId={deviceId} />
+                <DetectionsTable
+                  client={client}
+                  deviceId={deviceId}
+                  alerts={alerts}
+                  setAlerts={setAlerts}
+                />
               </GridItem>
               <GridItem span={12}>
-                <VulnsTable client={client} deviceId={deviceId} />
+                <VulnsTable client={client} deviceId={deviceId} vulns={vulns} setVulns={setVulns} />
               </GridItem>
             </Grid>
           </PageSection>

@@ -21,10 +21,9 @@ import {
 import { ExclamationTriangleIcon, CheckCircleIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 
-export default function EndpointDetails({ client, deviceId }) {
+export default function EndpointDetails({ client, deviceId, host, setHost }) {
   const [loading, setLoading] = React.useState(true);
   const [isRawExpanded, setIsRawExpanded] = React.useState(false);
-  const [host, setHost] = React.useState(null);
 
   React.useEffect(() => {
     if (!client || !deviceId) return;
