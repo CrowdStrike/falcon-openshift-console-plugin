@@ -17,16 +17,16 @@ import {
   EmptyStateVariant,
   Skeleton,
 } from '@patternfly/react-core';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import * as React from 'react';
 import SeverityLabel from '../shared/SeverityLabel';
 import { CheckIcon } from '@patternfly/react-icons';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
-  const [groupedVulns, setGroupedVulns] = React.useState([]);
   const [expanded, setExpanded] = React.useState([]);
+  const [sortedRemediations, setSortedRemediations] = React.useState([]);
 
   React.useEffect(() => {
     if (!client || !deviceId) return;
@@ -53,14 +53,14 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
 
   React.useEffect(() => {
     if (!vulns) return;
-    const grouped = {};
-    // put all the vulns together under the app name
-    for (const v of vulns) {
-      //TODO: when would there be multiple apps?
-      const app = v.apps[0].productNameNormalized;
-      if (!(app in grouped)) {
-        grouped[app] = {
-          app: v.apps[0],
+
+    const remediationToCve = {};
+    vulns.forEach((v) => {
+      const r = v.remediation.entities[0];
+      if (!(r.id in remediationToCve)) {
+        remediationToCve[r.id] = r;
+        Object.assign(remediationToCve[r.id], {
+          cves: [],
           maxBaseScore: 0,
           counts: {
             critical: 0,
@@ -68,28 +68,26 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
             medium: 0,
             low: 0,
           },
-          vulns: [],
-        };
+        });
       }
-      grouped[app].vulns.push(v);
-      grouped[app].counts[v.cve.severity.toLowerCase()]++;
-      if (v.cve.baseScore > grouped[app].maxBaseScore) {
-        grouped[app].maxBaseScore = v.cve.baseScore;
+      remediationToCve[r.id].cves.push(v.cve);
+
+      remediationToCve[r.id].counts[v.cve.severity.toLowerCase()]++;
+      if (v.cve.baseScore > remediationToCve[r.id].maxBaseScore) {
+        remediationToCve[r.id].maxBaseScore = v.cve.baseScore;
       }
-    }
-    // sort individual vulns by baseScore desc
-    for (const g in grouped) {
-      grouped[g].vulns.sort((a, b) => {
-        return b.cve.baseScore - a.cve.baseScore;
-      });
-    }
-    // sort groups by maxBaseScore desc
-    const sorted = Object.values(grouped);
+    });
+
+    const sorted = Object.values(remediationToCve);
     sorted.sort((a, b) => {
       return b['maxBaseScore'] - a['maxBaseScore'];
     });
-
-    setGroupedVulns(sorted);
+    sorted.forEach((r) => {
+      r['cves'].sort((a, b) => {
+        return b.baseScore - a.baseScore;
+      });
+    });
+    setSortedRemediations(sorted);
   }, [vulns]);
 
   function toggle(id: string) {
@@ -103,7 +101,7 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
 
   return (
     <Card>
-      <CardTitle>Top vulnerabilities</CardTitle>
+      <CardTitle>Adressable vulnerabilities</CardTitle>
       <CardBody>
         {error && (
           <Alert variant="warning" title="Something went wrong">
@@ -111,44 +109,45 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
           </Alert>
         )}
         {loading && <Skeleton />}
-        {!loading && !error && groupedVulns.length > 0 && (
+        {!loading && !error && sortedRemediations.length > 0 && (
           <>
             <p style={{ marginBlockEnd: '14px' }}>
-              Displaying remediable vulnerabilities with a critical or high severity.
+              Displaying vulnerabilities with official vendor remediations.
             </p>
-            <DataList aria-label="Vulnerabilities">
-              {groupedVulns.map((g) => {
+            <DataList aria-label="Remediations">
+              {sortedRemediations.map((r) => {
                 return (
-                  <DataListItem isExpanded={expanded.includes(g.app.productNameNormalized)}>
+                  <DataListItem isExpanded={expanded.includes(r.id)}>
                     <DataListItemRow>
                       <DataListToggle
-                        onClick={() => toggle(g.app.productNameNormalized)}
-                        isExpanded={expanded.includes(g.app.productNameNormalized)}
-                        id={g.app.productNameNormalized}
+                        onClick={() => toggle(r.id)}
+                        isExpanded={expanded.includes(r.id)}
+                        id={r.id}
                       />
                       <DataListItemCells
                         dataListCells={[
-                          <DataListCell>{g.app.productNameVersion}</DataListCell>,
-                          <DataListCell>
+                          <DataListCell width={4}>{r.action}</DataListCell>,
+                          <DataListCell width={2}>{r.maxBaseScore}</DataListCell>,
+                          <DataListCell width={2}>
                             <SeverityLabel
                               name="critical"
-                              text={g.counts.critical}
-                              showColor={g.counts.critical > 0}
+                              text={r.counts.critical}
+                              showColor={r.counts.critical > 0}
                             />{' '}
                             <SeverityLabel
                               name="high"
-                              text={g.counts.high}
-                              showColor={g.counts.high > 0}
+                              text={r.counts.high}
+                              showColor={r.counts.high > 0}
                             />{' '}
                             <SeverityLabel
                               name="medium"
-                              text={g.counts.medium}
-                              showColor={g.counts.medium > 0}
+                              text={r.counts.medium}
+                              showColor={r.counts.medium > 0}
                             />{' '}
                             <SeverityLabel
                               name="low"
-                              text={g.counts.low}
-                              showColor={g.counts.low > 0}
+                              text={r.counts.low}
+                              showColor={r.counts.low > 0}
                             />
                           </DataListCell>,
                         ]}
@@ -156,7 +155,7 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
                     </DataListItemRow>
                     <DataListContent
                       aria-label="Vulnerability details"
-                      isHidden={!expanded.includes(g.app.productNameNormalized)}
+                      isHidden={!expanded.includes(r.id)}
                     >
                       <Table variant="compact">
                         <Thead>
@@ -165,25 +164,19 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
                             <Th>NVD Base Score</Th>
                             <Th>NVD Severity</Th>
                             <Th>ExPRT Rating</Th>
-                            <Th>Remediation</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {g.vulns.map((v) => {
+                          {r.cves.map((c) => {
                             return (
                               <Tr>
-                                <Td>{v.cve.id}</Td>
-                                <Td>{v.cve.baseScore}</Td>
+                                <Td>{c.id}</Td>
+                                <Td>{c.baseScore}</Td>
                                 <Td>
-                                  <SeverityLabel name={v.cve.severity} />
+                                  <SeverityLabel name={c.severity} />
                                 </Td>
                                 <Td>
-                                  <SeverityLabel name={v.cve.exprtRating} />
-                                </Td>
-                                <Td>
-                                  {v.remediation.entities &&
-                                    v.remediation.entities.length > 0 &&
-                                    v.remediation.entities[0].action}
+                                  <SeverityLabel name={c.exprtRating} />
                                 </Td>
                               </Tr>
                             );
@@ -194,20 +187,17 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
                   </DataListItem>
                 );
               })}
-            </DataList>{' '}
+            </DataList>
           </>
         )}
-        {!loading && !error && groupedVulns.length == 0 && (
+        {!loading && !error && sortedRemediations.length == 0 && (
           <EmptyState variant={EmptyStateVariant.xs}>
             <EmptyStateHeader
-              titleText="No vulnerabilities"
+              titleText="No remediations"
               icon={<EmptyStateIcon icon={CheckIcon} />}
             />
             <EmptyStateBody>
-              <p>
-                The Falcon sensor has not found any critical or high vulnerabilities with
-                remediations.
-              </p>
+              <p>The Falcon platform has not found any remediations to apply to this host.</p>
             </EmptyStateBody>
           </EmptyState>
         )}
