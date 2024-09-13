@@ -1,5 +1,8 @@
 import {
   Button,
+  Card,
+  CardBody,
+  CardTitle,
   ClipboardCopy,
   CodeBlock,
   CodeBlockCode,
@@ -9,22 +12,18 @@ import {
   DescriptionListTerm,
   DescriptionListTermHelpText,
   DescriptionListTermHelpTextButton,
-  Grid,
-  GridItem,
   Icon,
   Modal,
   ModalVariant,
   Popover,
   Skeleton,
-  Title,
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon, CheckCircleIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 
-export default function EndpointDetails({ client, deviceId }) {
+export default function EndpointDetails({ client, deviceId, host, setHost }) {
   const [loading, setLoading] = React.useState(true);
   const [isRawExpanded, setIsRawExpanded] = React.useState(false);
-  const [host, setHost] = React.useState(null);
 
   React.useEffect(() => {
     if (!client || !deviceId) return;
@@ -75,18 +74,16 @@ export default function EndpointDetails({ client, deviceId }) {
           <CodeBlockCode>{JSON.stringify(host, null, 2)}</CodeBlockCode>
         </CodeBlock>
       </Modal>
-      <Grid>
-        <GridItem span={12}>
-          <Title headingLevel="h2" className="co-section-heading">
-            Endpoint details
-            {!loading && (
-              <Button onClick={toggleIsRawExpanded} variant="link">
-                Show raw details
-              </Button>
-            )}
-          </Title>
-        </GridItem>
-        <GridItem span={6}>
+      <Card>
+        <CardTitle className="crwd-card-title">
+          Endpoint details
+          {!loading && (
+            <Button onClick={toggleIsRawExpanded} variant="link" isInline>
+              Show raw details
+            </Button>
+          )}
+        </CardTitle>
+        <CardBody>
           {loading ? (
             <>
               <Skeleton width="75%"></Skeleton>
@@ -96,16 +93,6 @@ export default function EndpointDetails({ client, deviceId }) {
               {detail('Hostname', host.hostname)}
               {detail('Operating system', host.osVersion)}
               {detail('Kernel', host.kernelVersion)}
-            </DescriptionList>
-          )}
-        </GridItem>
-        <GridItem span={6}>
-          {loading ? (
-            <>
-              <Skeleton width="75%"></Skeleton>
-            </>
-          ) : (
-            <DescriptionList>
               {detail(
                 'Device ID',
                 <ClipboardCopy hoverTip="Copy" clickTip="Copied" variant="inline-compact" isCode>
@@ -132,10 +119,11 @@ export default function EndpointDetails({ client, deviceId }) {
                   </>
                 ),
               )}
+              {detail('Last seen', host.lastSeen)}
             </DescriptionList>
           )}
-        </GridItem>
-      </Grid>
+        </CardBody>
+      </Card>
     </>
   );
 }

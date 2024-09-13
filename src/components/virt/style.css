@@ -1,0 +1,35 @@
+ul.crwd-process-tree-root {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.crwd-process-tree-child {
+  list-style-type: '∟';
+}
+
+ul.crwd-process-tree-child li::marker {
+  color: #8A8D90;
+}
+
+ul.crwd-process-tree-root pre, ul.crwd-process-tree-child pre {
+  text-wrap: wrap;
+}
+
+ul.crwd-process-tree-root li, ul.crwd-process-tree-child li {
+  padding: 5px 0px 0px 5px;
+}
+
+div.crwd-card-title {
+  /* card titles with an action link will display action link right aligned */
+  display: flex;
+  justify-content: space-between;
+}
+
+div.crwd-health-item {
+  display: flex;
+    align-items: center;
+}
+
+div.crwd-health-item__content {
+  margin-left: 1rem;
+}

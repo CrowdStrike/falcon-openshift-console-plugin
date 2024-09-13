@@ -5,12 +5,13 @@ function makeTreeItem(processDetails) {
     name: processDetails.cmdline,
     id: processDetails.process_id,
     children: [],
+    isRoot: false,
   };
 }
 
 function makeProcessTreeUl(options) {
   return (
-    <ul style={{ listStyleType: "'∟'" }}>
+    <ul className={options[0].isRoot ? 'crwd-process-tree-root' : 'crwd-process-tree-child'}>
       <li>
         <pre>{options[0].name}</pre>
         {options[0].children.length > 0 && makeProcessTreeUl(options[0].children)}
@@ -33,6 +34,8 @@ export default function ProcessTree({ eppAlert }) {
     grandparent.children = options;
     options = [grandparent];
   }
+
+  options[0].isRoot = true;
 
   return makeProcessTreeUl(options);
 }
