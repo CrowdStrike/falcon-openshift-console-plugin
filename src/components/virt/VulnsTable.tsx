@@ -33,9 +33,9 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
 
     client.spotlightVulnerabilities
       .combinedQueryVulnerabilities(
-        `aid:'${deviceId}'+(cve.severity:'CRITICAL',cve.severity:'HIGH')+cve.remediation_level:'O'`,
+        `aid:'${deviceId}'+cve.remediation_level:'O'`,
         undefined,
-        1000,
+        5000,
         undefined,
         ['cve', 'remediation'],
       )
@@ -139,6 +139,16 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
                               name="high"
                               text={g.counts.high}
                               showColor={g.counts.high > 0}
+                            />{' '}
+                            <SeverityLabel
+                              name="medium"
+                              text={g.counts.medium}
+                              showColor={g.counts.medium > 0}
+                            />{' '}
+                            <SeverityLabel
+                              name="low"
+                              text={g.counts.low}
+                              showColor={g.counts.low > 0}
                             />
                           </DataListCell>,
                         ]}

@@ -64,7 +64,7 @@ export default function VirtualMachineTab({ obj }) {
 
     const filter = obj.spec.template.spec.domain.devices.interfaces
       .map((iface) => {
-        return `connection_mac_address:'${iface.macAddress.toLowerCase().replaceAll(':', '-')}'`;
+        return `mac_address:'${iface.macAddress.toLowerCase().replaceAll(':', '-')}'`;
       })
       .join(',');
     client.hosts

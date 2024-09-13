@@ -119,6 +119,7 @@ export default function EndpointDetails({ client, deviceId, host, setHost }) {
                   </>
                 ),
               )}
+              {detail('Last seen', host.lastSeen)}
             </DescriptionList>
           )}
         </CardBody>
