@@ -22,10 +22,11 @@ export default function SecurityOverview({ host, alerts, vulns }) {
       return <HealthItem title="Malicious activity" isInProgress={true} />;
     }
 
-    const hasHighCritical = alerts.filter((a) => {
-      const s = a.severityName.toLowerCase();
-      return s == 'high' || s == 'critical';
-    });
+    const hasHighCritical =
+      alerts.filter((a) => {
+        const s = a.severityName.toLowerCase();
+        return s == 'high' || s == 'critical';
+      }).length > 0;
     const hasLowMed = alerts.length > 0 && !hasHighCritical;
 
     let status = 'success';
@@ -49,14 +50,12 @@ export default function SecurityOverview({ host, alerts, vulns }) {
     let hasHighCritical = false;
     let hasLowMed = false;
     vulns.forEach((v) => {
-      console.log(v.cve.remediationLevel, v.cve.severity);
-      // ignore vulns that don't have an official vendor remediation
-      if (v.cve.remediationLevel != 'O') return;
+      // ignore vulns that don't have any remediations
+      if (!v.remediation.entities || v.remediation.entities.length == 0) return;
 
       const s = v.cve.severity.toLowerCase();
       hasHighCritical = hasHighCritical || s == 'critical' || s == 'high';
       hasLowMed = hasLowMed || (s != 'critical' && s != 'high');
-      console.log(hasHighCritical, hasLowMed);
     });
 
     let status = 'success';
