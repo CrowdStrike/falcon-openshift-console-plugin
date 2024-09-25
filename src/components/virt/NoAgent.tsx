@@ -21,8 +21,8 @@ export default function NoAgent() {
       />
       <EmptyStateBody>
         <p>
-          We couldn't find a running Falcon agent that matches this system's MAC address. If the
-          agent is installed, make sure the <code>falcon-sensor</code> service is running.
+          We couldn&apos;t find a running Falcon agent that matches this system&apos;s MAC address.
+          If the agent is installed, make sure the <code>falcon-sensor</code> service is running.
         </p>
       </EmptyStateBody>
       <EmptyStateFooter>

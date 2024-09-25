@@ -8,7 +8,7 @@ ul.crwd-process-tree-child {
 }
 
 ul.crwd-process-tree-child li::marker {
-  color: #8A8D90;
+  color: var(--pf-global--Color--400);
 }
 
 ul.crwd-process-tree-root pre, ul.crwd-process-tree-child pre {
@@ -16,7 +16,7 @@ ul.crwd-process-tree-root pre, ul.crwd-process-tree-child pre {
 }
 
 ul.crwd-process-tree-root li, ul.crwd-process-tree-child li {
-  padding: 5px 0px 0px 5px;
+  padding: 5px 0 0 5px;
 }
 
 div.crwd-card-title {

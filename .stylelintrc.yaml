@@ -15,8 +15,10 @@ rules:
   # Disallow CSS classnames prefixed with .pf- or .co- as these prefixes are
   # reserved by PatternFly and OpenShift console.
   selector-disallowed-list:
-    - "*"
-    - /\.(pf|co)-/
+    # Due to a issue with PF: https://github.com/openshift/console/pull/14246
+    - null
+    # - "*"
+    # - /\.(pf|co)-/
   # Plugins should avoid naked element selectors like `table` and `li` since
   # this can impact layout of existing pages in console.
   selector-max-type:
