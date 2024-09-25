@@ -1,9 +1,17 @@
 name: Container Build
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - '.devcontainer/**'
+      - '.github/**'
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - '.devcontainer/**'
+      - '.github/**'
 
 jobs:
   build:
