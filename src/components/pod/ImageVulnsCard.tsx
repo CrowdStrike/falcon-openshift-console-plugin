@@ -1,37 +1,39 @@
-import { Card, CardTitle, CardBody } from '@patternfly/react-core';
+import { Card, CardTitle, CardBody, Label } from '@patternfly/react-core';
 import * as React from 'react';
 import SeverityLabel from '../shared/SeverityLabel';
 import FindingsList from '../shared/FindingsList';
 import { FalconClient } from 'crowdstrike-falcon';
 
-interface ImageDetectionsCardProps {
+interface ImageVulnsCardProps {
   client: FalconClient;
   pod: any;
 }
 
-export default function ImageDetectionsCard({ client, pod }: ImageDetectionsCardProps) {
+export default function ImageVulnsCard({ client, pod }: ImageVulnsCardProps) {
   const [promise, setPromise] = React.useState(null);
 
-  const sevs = ['unknown', 'informational', 'low', 'medium', 'high', 'critical'];
   function sorter(a, b) {
-    return sevs.indexOf(b.detectionSeverity) - sevs.indexOf(a.detectionSeverity);
+    return b.cvssScore - a.cvssScore;
   }
 
   const header = [
     {
-      field: 'title',
-      width: 4,
+      field: 'cveId',
+      width: 3,
     },
     {
-      field: 'detectionType',
+      field: 'cvssScore',
       width: 1,
     },
     {
-      field: 'detectionSeverity',
+      field: 'exploitedStatusString',
+      width: 1,
+    },
+    {
+      field: 'severity',
       width: 1,
     },
   ] as {
-    // ensure width matches the component params, not generic number
     field: string;
     width?: 1 | 2 | 3 | 4 | 5;
   }[];
@@ -40,27 +42,17 @@ export default function ImageDetectionsCard({ client, pod }: ImageDetectionsCard
     {
       field: 'description',
     },
-    {
-      field: 'remediation',
-    },
-    {
-      field: 'details',
-    },
   ];
 
   const displayFns = {
-    detectionSeverity: function (s) {
+    severity: function (s) {
       return <SeverityLabel name={s} />;
     },
-    details: function (d) {
-      return d.length > 0 ? (
-        <ul>
-          {d.map((dd) => {
-            return <li key={dd}>{dd}</li>;
-          })}
-        </ul>
+    exploitedStatusString: function (exploited) {
+      return exploited == 'Available' ? (
+        <Label color="red">Known exploit</Label>
       ) : (
-        'no additional details'
+        <Label>Unproven</Label>
       );
     },
   };
@@ -74,17 +66,17 @@ export default function ImageDetectionsCard({ client, pod }: ImageDetectionsCard
       return `image_digest:'${c.imageID.split('@')[1].split(':')[1]}'`;
     });
 
-    setPromise(client.containerDetections.readCombinedDetections(filter));
+    setPromise(client.containerVulnerabilities.readCombinedVulnerabilities(filter));
   }, [client]);
 
   return (
     <Card>
-      <CardTitle>Image detections</CardTitle>
+      <CardTitle>Image vulnerabilities</CardTitle>
       <CardBody>
         <FindingsList
           queryPromise={promise}
           sortFn={sorter}
-          idField="detectionId"
+          idField="cveId"
           header={header}
           body={body}
           displayFns={displayFns}

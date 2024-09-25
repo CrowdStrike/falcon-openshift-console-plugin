@@ -13,6 +13,7 @@ import {
 import { FalconClient } from 'crowdstrike-falcon';
 import { useK8sModel, k8sGet } from '@openshift-console/dynamic-plugin-sdk';
 import ImageDetectionsCard from './ImageDetectionsCard';
+import ImageVulnsCard from './ImageVulnsCard';
 
 export default function PodDetails({ obj }) {
   const [loading, setLoading] = React.useState(true);
@@ -67,6 +68,9 @@ export default function PodDetails({ obj }) {
           <Grid hasGutter>
             <GridItem span={12}>
               <ImageDetectionsCard client={client} pod={obj} />
+            </GridItem>
+            <GridItem span={12}>
+              <ImageVulnsCard client={client} pod={obj} />
             </GridItem>
           </Grid>
         </PageSection>

@@ -22,6 +22,21 @@ import { CheckIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import './finding-list.css';
 
+interface FindingsListProps {
+  queryPromise: Promise<any>;
+  sortFn: (a: any, b: any) => number;
+  idField: string;
+  header: {
+    field: string;
+    width?: 1 | 2 | 3 | 4 | 5;
+  }[];
+  body: {
+    field: string;
+    name?: string;
+  }[];
+  displayFns: Record<string, (value: any) => any>;
+}
+
 export default function FindingsList({
   queryPromise,
   sortFn = null,
@@ -29,7 +44,7 @@ export default function FindingsList({
   header,
   body,
   displayFns,
-}) {
+}: FindingsListProps) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
   const [findings, setFindings] = React.useState(null);
@@ -41,7 +56,7 @@ export default function FindingsList({
     queryPromise
       .then((resp) => {
         if (resp['resources'].length == 0) return;
-        let findings = resp['resources'];
+        const findings = resp['resources'];
         if (sortFn) findings.sort(sortFn);
         setFindings(findings);
       })
@@ -66,7 +81,7 @@ export default function FindingsList({
   function headerCells(finding) {
     return header.map((h) => {
       return (
-        <DataListCell width={h.width && h.width}>
+        <DataListCell width={h.width ? h.width : null}>
           {/* if there is a custom display function for this field, call it; otherwise just display field value */}
           {h.field in displayFns ? displayFns[h.field](finding[h.field]) : finding[h.field]}
         </DataListCell>
