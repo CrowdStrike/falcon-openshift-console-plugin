@@ -4,12 +4,18 @@
 
 # Falcon OpenShift Console Plugin
 
-[![Docker Repository on Quay](https://quay.io/repository/crowdstrike/falcon-openshift-console-plugin/status "Docker Repository on Quay")](https://quay.io/repository/crowdstrike/falcon-openshift-console-plugin)
+[![Docker Repository on Quay](https://quay.io/repository/crowdstrike/falcon-openshift-console-plugin/status 'Docker Repository on Quay')](https://quay.io/repository/crowdstrike/falcon-openshift-console-plugin)
 
 This is a dynamic plugin for the Red Hat OpenShift console. The plugin provides additional visibility
 to the Falcon operator and Falcon-protected virtual machines.
 
+### Extension to the VirtualMachine page
+
 ![Screenshot of the virtual machine page extension.](img/screenshot-vm.png)
+
+### Extension to the Pod page
+
+![Screenshot of the pod page extension.](img/screenshot-pod.png)
 
 ## Support
 
@@ -49,7 +55,7 @@ helm upgrade -i  my-plugin charts/openshift-console-plugin -n plugin__console-pl
 
 > [!NOTE]
 > This configuration assumes any user with access to read secrets in the chosen namespace should
-have access to the API client itself, as well as the related data from the Falcon platform.
+> have access to the API client itself, as well as the related data from the Falcon platform.
 
 If you have multiple namespaces with VM workloads, you will need to configure a `crowdstrike-api` secret
 in each.
