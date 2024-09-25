@@ -85,7 +85,7 @@ export default function DetectionsTable({ client, deviceId, alerts, setAlerts })
           <DataList aria-label="Endpoint alerts">
             {alerts.map((a) => {
               return (
-                <DataListItem isExpanded={expanded.includes(a.compositeId)}>
+                <DataListItem key={a.compositeId} isExpanded={expanded.includes(a.compositeId)}>
                   <DataListItemRow>
                     <DataListToggle
                       onClick={() => toggle(a.compositeId)}
@@ -94,12 +94,18 @@ export default function DetectionsTable({ client, deviceId, alerts, setAlerts })
                     />
                     <DataListItemCells
                       dataListCells={[
-                        <DataListCell width={4}>{a.description}</DataListCell>,
-                        <DataListCell width={1}>{a.tactic}</DataListCell>,
-                        <DataListCell width={1}>
+                        <DataListCell key="description" width={4}>
+                          {a.description}
+                        </DataListCell>,
+                        <DataListCell key="tactic" width={1}>
+                          {a.tactic}
+                        </DataListCell>,
+                        <DataListCell key="severity" width={1}>
                           <SeverityLabel name={a.severityName} />
                         </DataListCell>,
-                        <DataListCell width={2}>{a.timestamp.toUTCString()}</DataListCell>,
+                        <DataListCell key="timestamp" width={2}>
+                          {a.timestamp.toUTCString()}
+                        </DataListCell>,
                       ]}
                     />
                     <DataListAction

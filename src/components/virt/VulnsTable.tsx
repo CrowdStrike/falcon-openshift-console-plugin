@@ -120,7 +120,7 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
             <DataList aria-label="Remediations">
               {sortedRemediations.map((r) => {
                 return (
-                  <DataListItem isExpanded={expanded.includes(r.id)}>
+                  <DataListItem key={r.id} isExpanded={expanded.includes(r.id)}>
                     <DataListItemRow>
                       <DataListToggle
                         onClick={() => toggle(r.id)}
@@ -129,9 +129,13 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
                       />
                       <DataListItemCells
                         dataListCells={[
-                          <DataListCell width={4}>{r.action}</DataListCell>,
-                          <DataListCell width={2}>{r.maxBaseScore}</DataListCell>,
-                          <DataListCell width={2}>
+                          <DataListCell key="action" width={4}>
+                            {r.action}
+                          </DataListCell>,
+                          <DataListCell key="maxscore" width={2}>
+                            {r.maxBaseScore}
+                          </DataListCell>,
+                          <DataListCell key="severity" width={2}>
                             <SeverityLabel
                               name="critical"
                               text={r.counts.critical}
@@ -172,7 +176,7 @@ export default function VulnsTable({ client, deviceId, vulns, setVulns }) {
                         <Tbody>
                           {r.cves.map((c) => {
                             return (
-                              <Tr>
+                              <Tr key={c.id}>
                                 <Td>{c.id}</Td>
                                 <Td>{c.baseScore}</Td>
                                 <Td>

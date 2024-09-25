@@ -15,9 +15,9 @@ export default function PodDetails({ obj }) {
     },
   ];
 
-  const detectionsBody = detections.map((d) => {
+  const detectionsBody = detections.map((d, index) => {
     return (
-      <Tr>
+      <Tr key={index}>
         <Td>{d.severity}</Td>
         <Td>{d.description}</Td>
         <Td>{d.action}</Td>
