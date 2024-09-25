@@ -81,7 +81,7 @@ export default function FindingsList({
   function headerCells(finding) {
     return header.map((h) => {
       return (
-        <DataListCell width={h.width ? h.width : null}>
+        <DataListCell key={h.field} width={h.width ? h.width : null}>
           {/* if there is a custom display function for this field, call it; otherwise just display field value */}
           {h.field in displayFns ? displayFns[h.field](finding[h.field]) : finding[h.field]}
         </DataListCell>
