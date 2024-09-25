@@ -1,35 +1,59 @@
-import {
-  Card,
-  CardTitle,
-  CardBody,
-  Alert,
-  Skeleton,
-  DataList,
-  DataListItem,
-  DataListItemRow,
-  DataListToggle,
-  DataListItemCells,
-  DataListCell,
-  DataListContent,
-  DescriptionList,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  DescriptionListDescription,
-  EmptyState,
-  EmptyStateVariant,
-  EmptyStateHeader,
-  EmptyStateIcon,
-  EmptyStateBody,
-} from '@patternfly/react-core';
-import { CheckIcon } from '@patternfly/react-icons';
+import { Card, CardTitle, CardBody } from '@patternfly/react-core';
 import * as React from 'react';
 import SeverityLabel from '../shared/SeverityLabel';
+import FindingsList from '../shared/FindingsList';
 
 export default function ImageDetectionsCard({ client, pod }) {
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
-  const [detections, setDetections] = React.useState(null);
-  const [expanded, setExpanded] = React.useState([]);
+  const [promise, setPromise] = React.useState(null);
+
+  const sevs = ['unknown', 'informational', 'low', 'medium', 'high', 'critical'];
+  function sorter(a, b) {
+    return sevs.indexOf(b.detectionSeverity) - sevs.indexOf(a.detectionSeverity);
+  }
+
+  const header = [
+    {
+      field: 'title',
+      width: 4,
+    },
+    {
+      field: 'detectionType',
+      width: 1,
+    },
+    {
+      field: 'detectionSeverity',
+      width: 1,
+    },
+  ];
+
+  const body = [
+    {
+      field: 'description',
+    },
+    {
+      field: 'remediation',
+    },
+    {
+      field: 'details',
+    },
+  ];
+
+  const displayFns = {
+    detectionSeverity: function (s) {
+      return <SeverityLabel name={s} />;
+    },
+    details: function (d) {
+      return d.length > 0 ? (
+        <ul>
+          {d.map((dd) => {
+            return <li>{dd}</li>;
+          })}
+        </ul>
+      ) : (
+        'no additional details'
+      );
+    },
+  };
 
   React.useEffect(() => {
     if (client == null) return;
@@ -40,107 +64,21 @@ export default function ImageDetectionsCard({ client, pod }) {
       return `image_digest:'${c.imageID.split('@')[1].split(':')[1]}'`;
     });
 
-    client.containerDetections
-      .readCombinedDetections(filter)
-      .then((resp) => {
-        if (resp['resources'].length > 0) {
-          setDetections(resp['resources']);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        setError(e.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    setPromise(client.containerDetections.readCombinedDetections(filter));
   }, [client]);
-
-  function toggle(id: string) {
-    const index = expanded.indexOf(id);
-    const newExpanded =
-      index >= 0
-        ? [...expanded.slice(0, index), ...expanded.slice(index + 1, expanded.length)]
-        : [...expanded, id];
-    setExpanded(newExpanded);
-  }
 
   return (
     <Card>
       <CardTitle>Image detections</CardTitle>
       <CardBody>
-        {error && (
-          <Alert variant="warning" title="Something went wrong">
-            {error}
-          </Alert>
-        )}
-        {loading && <Skeleton />}
-        {!loading && !error && detections && detections.length > 0 && (
-          <DataList aria-label="Image detections">
-            {detections.map((d) => {
-              return (
-                <DataListItem isExpanded={expanded.includes(d.detectionId)}>
-                  <DataListItemRow>
-                    <DataListToggle
-                      onClick={() => toggle(d.detectionId)}
-                      isExpanded={expanded.includes(d.detectionId)}
-                      id={d.detectionId}
-                    />
-                    <DataListItemCells
-                      dataListCells={[
-                        <DataListCell width={4}>{d.title}</DataListCell>,
-                        <DataListCell width={1}>{d.detectionType}</DataListCell>,
-                        <DataListCell width={1}>
-                          <SeverityLabel name={d.detectionSeverity} />
-                        </DataListCell>,
-                      ]}
-                    />
-                  </DataListItemRow>
-                  <DataListContent
-                    aria-label="Alert details"
-                    isHidden={!expanded.includes(d.detectionId)}
-                  >
-                    <DescriptionList isHorizontal isCompact>
-                      <DescriptionListGroup>
-                        <DescriptionListTerm>Description</DescriptionListTerm>
-                        <DescriptionListDescription>{d.description}</DescriptionListDescription>
-                      </DescriptionListGroup>
-                      <DescriptionListGroup>
-                        <DescriptionListTerm>Remediation</DescriptionListTerm>
-                        <DescriptionListDescription>{d.remediation}</DescriptionListDescription>
-                      </DescriptionListGroup>
-                      <DescriptionListGroup>
-                        <DescriptionListTerm>Details</DescriptionListTerm>
-                        <DescriptionListDescription>
-                          {d.details.length > 0 ? (
-                            <ul>
-                              {d.details.map((dd) => {
-                                return <li>{dd}</li>;
-                              })}
-                            </ul>
-                          ) : (
-                            'no additional details'
-                          )}
-                        </DescriptionListDescription>
-                      </DescriptionListGroup>
-                    </DescriptionList>
-                  </DataListContent>
-                </DataListItem>
-              );
-            })}
-          </DataList>
-        )}
-        {!loading && !error && detections && detections.length == 0 && (
-          <EmptyState variant={EmptyStateVariant.xs}>
-            <EmptyStateHeader
-              titleText="No image detections"
-              icon={<EmptyStateIcon icon={CheckIcon} />}
-            />
-            <EmptyStateBody>
-              <p>The Falcon sensor has not detected any detections within the pod's images.</p>
-            </EmptyStateBody>
-          </EmptyState>
-        )}
+        <FindingsList
+          queryPromise={promise}
+          sortFn={sorter}
+          idField="detectionId"
+          header={header}
+          body={body}
+          displayFns={displayFns}
+        />
       </CardBody>
     </Card>
   );
