@@ -1,8 +1,10 @@
 <p align="center">
-   <img src="img/crowdstrike.png" alt="CrowdStrike logo" width="500"/>
+   <img src="https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/cs-logo.png" alt="CrowdStrike logo" width="500"/>
 </p>
 
 # Falcon OpenShift Console Plugin
+
+[![Docker Repository on Quay](https://quay.io/repository/crowdstrike/falcon-openshift-console-plugin/status "Docker Repository on Quay")](https://quay.io/repository/crowdstrike/falcon-openshift-console-plugin)
 
 This is a dynamic plugin for the Red Hat OpenShift console. The plugin provides additional visibility
 to the Falcon operator and Falcon-protected virtual machines.
@@ -15,38 +17,21 @@ The Falcon OpenShift Console Plugin is an open source project, not a CrowdStrike
 
 ## Deployment
 
-### Build the image
-
-Before you can deploy your plugin on a cluster, you must build an image and
-push it to an image registry.
-
-1. Build the image:
-
-   ```sh
-   docker build -t quay.io/my-repository/my-plugin:latest .
-   ```
-
-2. Push the image:
-
-   ```sh
-   docker push quay.io/my-repository/my-plugin:latest
-   ```
-
-NOTE: If you have a Mac with Apple silicon, you will need to add the flag
-`--platform=linux/amd64` when building the image to target the correct platform
-to run in-cluster.
-
 ### Deploy the Helm chart
 
-Install the chart using the name of the plugin as the Helm release name into a new namespace or an existing namespace as specified by the `plugin_console-plugin-template` parameter and providing the location of the image within the `plugin.image` parameter by using the following command:
+The Falcon OpenShift Console Plugin is available at [quay.io/crowdstrike/falcon-openshift-console-plugin](https://quay.io/crowdstrike/falcon-openshift-console-plugin).
+
+Install the chart using the name of the plugin as the Helm release name into a new namespace or an existing namespace as specified by the `plugin_console-plugin-template` parameter by using the following command:
 
 ```shell
-helm upgrade -i  my-plugin charts/openshift-console-plugin -n plugin__console-plugin-template --create-namespace --set plugin.image=my-plugin-image-location
+helm upgrade -i  my-plugin charts/openshift-console-plugin -n plugin__console-plugin-template --create-namespace --set plugin.image=quay.io/crowdstrike/falcon-openshift-console-plugin:latest
 ```
 
-NOTE: When deploying on OpenShift 4.10, it is recommended to add the parameter `--set plugin.securityContext.enabled=false` which will omit configurations related to Pod Security.
+> [!NOTE]
+> When deploying on OpenShift 4.10, it is recommended to add the parameter `--set plugin.securityContext.enabled=false` which will omit configurations related to Pod Security.
 
-NOTE: When defining i18n namespace, adhere `plugin__<name-of-the-plugin>` format. The name of the plugin should be extracted from the `consolePlugin` declaration within the [package.json](package.json) file.
+> [!NOTE]
+> When defining i18n namespace, adhere `plugin__<name-of-the-plugin>` format. The name of the plugin should be extracted from the `consolePlugin` declaration within the [package.json](package.json) file.
 
 ### Configuration
 
@@ -62,7 +47,8 @@ NOTE: When defining i18n namespace, adhere `plugin__<name-of-the-plugin>` format
    - `client_id`
    - `client_secret`
 
-NOTE: This configuration assumes any user with access to read secrets in the chosen namespace should
+> [!NOTE]
+> This configuration assumes any user with access to read secrets in the chosen namespace should
 have access to the API client itself, as well as the related data from the Falcon platform.
 
 If you have multiple namespaces with VM workloads, you will need to configure a `crowdstrike-api` secret
