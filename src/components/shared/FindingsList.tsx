@@ -101,7 +101,7 @@ export default function FindingsList({
         <DataList aria-label="Findings">
           {findings.map((f) => {
             return (
-              <DataListItem isExpanded={expanded.includes(f[idField])}>
+              <DataListItem key={f[idField]} isExpanded={expanded.includes(f[idField])}>
                 <DataListItemRow>
                   <DataListToggle
                     onClick={() => toggle(f[idField])}
@@ -117,7 +117,7 @@ export default function FindingsList({
                   <DescriptionList isHorizontal isCompact>
                     {body.map((b) => {
                       return (
-                        <DescriptionListGroup>
+                        <DescriptionListGroup key={b.field}>
                           <DescriptionListTerm className={!b.name && 'crwd-finding-field-as-name'}>
                             {b.name ? b.name : b.field}
                           </DescriptionListTerm>
