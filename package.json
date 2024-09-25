@@ -1,6 +1,6 @@
 {
   "name": "falcon-openshift-console-plugin",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "CrowdStrike Falcon OpenShift console plugin",
   "private": true,
   "license": "Apache-2.0",
