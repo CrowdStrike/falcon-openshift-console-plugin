@@ -14,41 +14,12 @@ export default function RuntimeDetectionsCard({ client, pod }: RuntimeDetections
 
   const sevs = ['unknown', 'informational', 'low', 'medium', 'high', 'critical'];
   function sorter(a, b) {
-    return sevs.indexOf(b.severity) - sevs.indexOf(a.severity);
-  }
-
-  // This function is used to format the date in the format we want without installing any
-  // additional libraries
-  function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    const months = [
-      'Jan.',
-      'Feb.',
-      'Mar.',
-      'Apr.',
-      'May',
-      'Jun.',
-      'Jul.',
-      'Aug.',
-      'Sep.',
-      'Oct.',
-      'Nov.',
-      'Dec.',
-    ];
-
-    const month = months[date.getMonth()];
-    const day = date.getDate().toString().padStart(2, '0');
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
-
-    return `${month} ${day}, ${year} ${hours}:${minutes}:${seconds}`;
+    return sevs.indexOf(b.severity.toLowerCase()) - sevs.indexOf(a.severity.toLowerCase());
   }
 
   const header = [
     {
-      field: 'tacticAndTechnique',
+      field: 'detectionDescription',
       width: 4,
     },
     {
@@ -67,16 +38,20 @@ export default function RuntimeDetectionsCard({ client, pod }: RuntimeDetections
 
   const body = [
     {
-      field: 'detectionDescription',
-      name: 'Description',
+      field: 'containerName',
+      name: 'Container name',
+    },
+    {
+      field: 'tacticAndTechnique',
+      name: 'Tactic & technique',
+    },
+    {
+      field: 'actionTaken',
+      name: 'Action taken',
     },
     {
       field: 'commandLine',
       name: 'Command line',
-    },
-    {
-      field: 'imageDigest',
-      name: 'Image digest',
     },
   ];
 
@@ -85,19 +60,11 @@ export default function RuntimeDetectionsCard({ client, pod }: RuntimeDetections
       return <SeverityLabel name={s} />;
     },
     detectTimestamp: function (d) {
-      // return format(parseISO(d), 'MMM. d, yyyy HH:mm:ss');
-      return formatDate(d);
+      return new Date(d).toUTCString();
     },
-    details: function (d) {
-      return d.length > 0 ? (
-        <ul>
-          {d.map((dd) => {
-            return <li key={dd}>{dd}</li>;
-          })}
-        </ul>
-      ) : (
-        'no additional details'
-      );
+    commandLine: function (f) {
+      // wrap in <pre> block
+      return <pre>{f}</pre>;
     },
   };
 
@@ -123,6 +90,7 @@ export default function RuntimeDetectionsCard({ client, pod }: RuntimeDetections
           idField="detectionId"
           header={header}
           body={body}
+          termWidth="15ch"
           displayFns={displayFns}
         />
       </CardBody>
