@@ -24,7 +24,7 @@ import './finding-list.css';
 
 interface FindingsListProps {
   queryPromise: Promise<any>;
-  sortFn: (a: any, b: any) => number;
+  sortFn?: (a: any, b: any) => number;
   idField: string;
   header: {
     field: string;
@@ -34,6 +34,7 @@ interface FindingsListProps {
     field: string;
     name?: string;
   }[];
+  termWidth?: string;
   displayFns: Record<string, (value: any) => any>;
 }
 
@@ -43,6 +44,7 @@ export default function FindingsList({
   idField,
   header,
   body,
+  termWidth = null,
   displayFns,
 }: FindingsListProps) {
   const [loading, setLoading] = React.useState(true);
@@ -114,7 +116,7 @@ export default function FindingsList({
                   aria-label="Finding details"
                   isHidden={!expanded.includes(f[idField])}
                 >
-                  <DescriptionList isHorizontal isCompact>
+                  <DescriptionList isHorizontal termWidth={termWidth} isCompact>
                     {body.map((b) => {
                       return (
                         <DescriptionListGroup key={b.field}>
