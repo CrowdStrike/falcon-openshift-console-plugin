@@ -15,6 +15,7 @@ import { useK8sModel, k8sGet } from '@openshift-console/dynamic-plugin-sdk';
 import ImageDetectionsCard from './ImageDetectionsCard';
 import ImageVulnsCard from './ImageVulnsCard';
 import RuntimeDetectionsCard from './RuntimeDetectionsCard';
+import proxiedFetch from '../shared/ProxiedFetch';
 
 export default function PodDetails({ obj }) {
   const [loading, setLoading] = React.useState(true);
@@ -31,6 +32,7 @@ export default function PodDetails({ obj }) {
       .then((secret) => {
         setClient(
           new FalconClient({
+            fetchApi: proxiedFetch,
             cloud: 'us-2', // TODO: cast cloud to FalconCloud type
             // cloud: atob(secret['data'].cloud),
             clientId: atob(secret['data'].client_id),

@@ -24,6 +24,7 @@ import VulnsTable from './VulnsTable';
 import '../missing-pf-styles.css';
 import './style.css';
 import SecurityOverview from './SecurityOverview';
+import proxiedFetch from '../shared/ProxiedFetch';
 
 export default function VirtualMachineTab({ obj }) {
   const [loading, setLoading] = React.useState(true);
@@ -47,6 +48,7 @@ export default function VirtualMachineTab({ obj }) {
       .then((secret) => {
         setClient(
           new FalconClient({
+            fetchApi: proxiedFetch,
             cloud: 'us-2', // TODO: cast cloud to FalconCloud type
             // cloud: atob(secret['data'].cloud),
             clientId: atob(secret['data'].client_id),
