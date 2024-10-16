@@ -1,0 +1,22 @@
+name: Container Build API Gateway
+on:
+  push:
+    branches: ['main']
+    paths:
+      - api-gateway/**
+  pull_request:
+    branches: ['main']
+    paths:
+      - api-gateway/**
+
+jobs:
+  build:
+    name: Build image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: container build
+        run: |
+          docker build api-gateway

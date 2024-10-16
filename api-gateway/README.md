@@ -6,4 +6,4 @@ allows the plugin's frontend to make API requests via a service running inside t
 
 ## Usage
 
-See the `deploy.yaml` for examples.
+The API gateway is deployed automatically with the Helm chart.

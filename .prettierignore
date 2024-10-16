@@ -1,0 +1,3 @@
+# avoid issues with bracket spacing around e.g. {{ .Release.Namespace }}
+# https://github.com/redhat-developer/vscode-yaml/issues/246
+charts/openshift-console-plugin/templates/*.yaml
