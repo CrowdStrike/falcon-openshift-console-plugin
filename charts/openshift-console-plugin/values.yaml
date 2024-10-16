@@ -52,5 +52,3 @@ plugin:
         requests:
           cpu: 10m
           memory: 50Mi
-apigw:
-  image: quay.io/crowdstrike/falcon-openshift-console-plugin-apigw:latest
