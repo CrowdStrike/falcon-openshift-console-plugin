@@ -14,11 +14,31 @@ data:
       include            /etc/nginx/mime.types;
       default_type       application/octet-stream;
       keepalive_timeout  65;
+
+      upstream crowdstrike_api {
+        server api.us-2.crowdstrike.com:443;
+      }
+
       server {
         listen              {{ .Values.plugin.port }} ssl;
         listen              [::]:{{ .Values.plugin.port }} ssl;
         ssl_certificate     /var/cert/tls.crt;
         ssl_certificate_key /var/cert/tls.key;
         root                /usr/share/nginx/html;
+
+        location /crwdapi/ {
+          # respond to preflight requests
+          if ($request_method = OPTIONS) {
+            add_header Access-Control-Allow-Origin $http_origin;
+            add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
+            add_header Access-Control-Allow-Headers 'Authorization';
+            add_header Content-Type text/plain;
+            add_header Content-Length 0;
+            return 204;
+          }
+          # all other requests, proxy the response and then add CORS header
+          proxy_pass https://crowdstrike_api/;
+          add_header Access-Control-Allow-Origin $http_origin;
+        }
       }
     }

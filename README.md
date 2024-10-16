@@ -23,9 +23,13 @@ The Falcon OpenShift Console Plugin is an open source project, not a CrowdStrike
 
 ## Deployment
 
+### Prerequisites
+
+This plugin currently only supports CrowdStrike's US-2 cloud region.
+
 ### Deploy the Helm chart
 
-The Falcon OpenShift Console Plugin is available at [quay.io/crowdstrike/falcon-openshift-console-plugin](https://quay.io/crowdstrike/falcon-openshift-console-plugin) and the required API gateway is at [quay.io/crowdstrike/falcon-openshift-console-plugin-apigw](https://quay.io/crowdstrike/falcon-openshift-console-plugin-apigw)
+The Falcon OpenShift Console Plugin is available at [quay.io/crowdstrike/falcon-openshift-console-plugin](https://quay.io/crowdstrike/falcon-openshift-console-plugin)
 
 Install the chart using the name of the plugin as the Helm release name into a new namespace or an existing namespace as specified by the `plugin_console-plugin-template` parameter by using the following command:
 
