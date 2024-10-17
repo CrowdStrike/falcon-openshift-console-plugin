@@ -34,7 +34,7 @@ export default function PodDetails({ obj }) {
         setClient(
           new FalconClient({
             fetchApi: proxiedFetchFactory(cloud),
-            cloud: atob(secret['data'].cloud) as FalconCloud,
+            cloud: cloud,
             clientId: atob(secret['data'].client_id),
             clientSecret: atob(secret['data'].client_secret),
           }),
