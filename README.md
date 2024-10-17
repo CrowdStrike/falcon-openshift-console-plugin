@@ -23,18 +23,14 @@ The Falcon OpenShift Console Plugin is an open source project, not a CrowdStrike
 
 ## Deployment
 
-### Prerequisites
-
-This plugin currently only supports CrowdStrike's US-2 cloud region.
-
 ### Deploy the Helm chart
 
-The Falcon OpenShift Console Plugin is available at [quay.io/crowdstrike/falcon-openshift-console-plugin](https://quay.io/crowdstrike/falcon-openshift-console-plugin)
+The Falcon OpenShift Console Plugin is available at [quay.io/crowdstrike/falcon-openshift-console-plugin](https://quay.io/crowdstrike/falcon-openshift-console-plugin).
 
 Install the chart using the name of the plugin as the Helm release name into a new namespace or an existing namespace as specified by the `plugin_console-plugin-template` parameter by using the following command:
 
 ```shell
-helm upgrade -i  my-plugin charts/openshift-console-plugin -n plugin__console-plugin-template --create-namespace --set plugin.image=quay.io/crowdstrike/falcon-openshift-console-plugin:latest
+helm upgrade -i  falcon-openshift-console-plugin charts/openshift-console-plugin -n falcon-openshift-console-plugin --create-namespace --set plugin.image=quay.io/crowdstrike/falcon-openshift-console-plugin:latest
 ```
 
 > [!NOTE]
@@ -47,10 +43,12 @@ helm upgrade -i  my-plugin charts/openshift-console-plugin -n plugin__console-pl
    - Alerts: Read
    - Hosts: Read
    - Vulnerabilities: Read
+   - Falcon Container Image: Read
 
 2. In the same namespace as virtual machine or pod workloads where you want security visibility, create a secret named `crowdstrike-api` with
    the following fields:
 
+   - `cloud` (e.g. `us-1`)
    - `client_id`
    - `client_secret`
 

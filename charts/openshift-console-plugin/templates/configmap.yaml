@@ -15,8 +15,24 @@ data:
       default_type       application/octet-stream;
       keepalive_timeout  65;
 
-      upstream crowdstrike_api {
+      upstream crowdstrike_us1 {
+        server api.crowdstrike.com:443;
+      }
+
+      upstream crowdstrike_us2 {
         server api.us-2.crowdstrike.com:443;
+      }
+
+      upstream crowdstrike_eu1 {
+        server api.eu-1.crowdstrike.com:443;
+      }
+
+      # we receive the region in the header thanks to ProxiedFetch, so map that to the right upstream
+      map $http_x_cs_region $api_upstream {
+        default crowdstrike_us1;
+        us-1    crowdstrike_us1;
+        us-2    crowdstrike_us2;
+        eu-1    crowdstrike_eu1;
       }
 
       server {
@@ -27,18 +43,10 @@ data:
         root                /usr/share/nginx/html;
 
         location /crwdapi/ {
-          # respond to preflight requests
-          if ($request_method = OPTIONS) {
-            add_header Access-Control-Allow-Origin $http_origin;
-            add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
-            add_header Access-Control-Allow-Headers 'Authorization';
-            add_header Content-Type text/plain;
-            add_header Content-Length 0;
-            return 204;
-          }
-          # all other requests, proxy the response and then add CORS header
-          proxy_pass https://crowdstrike_api/;
-          add_header Access-Control-Allow-Origin $http_origin;
+          # a rewrite is not usually needed with a location like /foo/ and with a trailing slash on
+          # proxy_pass, but variables mess with this behavior https://stackoverflow.com/a/71224059
+          rewrite ^/crwdapi/(.*) /$1 break;
+          proxy_pass https://$api_upstream;
         }
       }
     }

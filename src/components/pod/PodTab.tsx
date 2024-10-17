@@ -10,12 +10,12 @@ import {
   PageSection,
   Spinner,
 } from '@patternfly/react-core';
-import { FalconClient } from 'crowdstrike-falcon';
+import { FalconClient, FalconCloud } from 'crowdstrike-falcon';
 import { useK8sModel, k8sGet } from '@openshift-console/dynamic-plugin-sdk';
 import ImageDetectionsCard from './ImageDetectionsCard';
 import ImageVulnsCard from './ImageVulnsCard';
 import RuntimeDetectionsCard from './RuntimeDetectionsCard';
-import proxiedFetch from '../shared/ProxiedFetch';
+import proxiedFetchFactory from '../shared/ProxiedFetch';
 
 export default function PodDetails({ obj }) {
   const [loading, setLoading] = React.useState(true);
@@ -30,11 +30,11 @@ export default function PodDetails({ obj }) {
   React.useEffect(() => {
     k8sGet({ model: secretModel, name: 'crowdstrike-api', ns: obj.metadata.namespace })
       .then((secret) => {
+        const cloud: FalconCloud = atob(secret['data'].cloud) as FalconCloud;
         setClient(
           new FalconClient({
-            fetchApi: proxiedFetch,
-            cloud: 'us-2', // TODO: cast cloud to FalconCloud type
-            // cloud: atob(secret['data'].cloud),
+            fetchApi: proxiedFetchFactory(cloud),
+            cloud: atob(secret['data'].cloud) as FalconCloud,
             clientId: atob(secret['data'].client_id),
             clientSecret: atob(secret['data'].client_secret),
           }),
