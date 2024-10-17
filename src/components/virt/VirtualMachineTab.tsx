@@ -16,6 +16,7 @@ import {
   DeviceapiDeviceSwagger,
   DomainBaseAPIVulnerabilityV2,
   FalconClient,
+  FalconCloud,
 } from 'crowdstrike-falcon';
 import { k8sGet, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import DetectionsTable from './DetectionsTable';
@@ -24,6 +25,7 @@ import VulnsTable from './VulnsTable';
 import '../missing-pf-styles.css';
 import './style.css';
 import SecurityOverview from './SecurityOverview';
+import proxiedFetchFactory from '../shared/ProxiedFetch';
 
 export default function VirtualMachineTab({ obj }) {
   const [loading, setLoading] = React.useState(true);
@@ -45,10 +47,11 @@ export default function VirtualMachineTab({ obj }) {
   React.useEffect(() => {
     k8sGet({ model: secretModel, name: 'crowdstrike-api', ns: obj.metadata.namespace })
       .then((secret) => {
+        const cloud: FalconCloud = atob(secret['data'].cloud) as FalconCloud;
         setClient(
           new FalconClient({
-            cloud: 'us-2', // TODO: cast cloud to FalconCloud type
-            // cloud: atob(secret['data'].cloud),
+            fetchApi: proxiedFetchFactory(cloud),
+            cloud: cloud,
             clientId: atob(secret['data'].client_id),
             clientSecret: atob(secret['data'].client_secret),
           }),

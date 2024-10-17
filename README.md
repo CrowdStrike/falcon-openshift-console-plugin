@@ -7,7 +7,7 @@
 [![Docker Repository on Quay](https://quay.io/repository/crowdstrike/falcon-openshift-console-plugin/status 'Docker Repository on Quay')](https://quay.io/repository/crowdstrike/falcon-openshift-console-plugin)
 
 This is a dynamic plugin for the Red Hat OpenShift console. The plugin provides additional visibility
-to the Falcon operator and Falcon-protected virtual machines.
+to the Falcon operator and Falcon-protected virtual machines and pods.
 
 ### Extension to the VirtualMachine page
 
@@ -30,11 +30,8 @@ The Falcon OpenShift Console Plugin is available at [quay.io/crowdstrike/falcon-
 Install the chart using the name of the plugin as the Helm release name into a new namespace or an existing namespace as specified by the `plugin_console-plugin-template` parameter by using the following command:
 
 ```shell
-helm upgrade -i  my-plugin charts/openshift-console-plugin -n plugin__console-plugin-template --create-namespace --set plugin.image=quay.io/crowdstrike/falcon-openshift-console-plugin:latest
+helm upgrade -i  falcon-openshift-console-plugin charts/openshift-console-plugin -n falcon-openshift-console-plugin --create-namespace --set plugin.image=quay.io/crowdstrike/falcon-openshift-console-plugin:latest
 ```
-
-> [!NOTE]
-> When deploying on OpenShift 4.10, it is recommended to add the parameter `--set plugin.securityContext.enabled=false` which will omit configurations related to Pod Security.
 
 > [!NOTE]
 > When defining i18n namespace, adhere `plugin__<name-of-the-plugin>` format. The name of the plugin should be extracted from the `consolePlugin` declaration within the [package.json](package.json) file.
@@ -46,10 +43,12 @@ helm upgrade -i  my-plugin charts/openshift-console-plugin -n plugin__console-pl
    - Alerts: Read
    - Hosts: Read
    - Vulnerabilities: Read
+   - Falcon Container Image: Read
 
-2. In the same namespace as virtual machine workloads, create a secret named `crowdstrike-api` with
+2. In the same namespace as virtual machine or pod workloads where you want security visibility, create a secret named `crowdstrike-api` with
    the following fields:
 
+   - `cloud` (e.g. `us-1`)
    - `client_id`
    - `client_secret`
 
@@ -57,8 +56,7 @@ helm upgrade -i  my-plugin charts/openshift-console-plugin -n plugin__console-pl
 > This configuration assumes any user with access to read secrets in the chosen namespace should
 > have access to the API client itself, as well as the related data from the Falcon platform.
 
-If you have multiple namespaces with VM workloads, you will need to configure a `crowdstrike-api` secret
-in each.
+If you have multiple namespaces where you want to surface CrowdStrike security data, you will need to configure a `crowdstrike-api` secret in each.
 
 ## Development
 
