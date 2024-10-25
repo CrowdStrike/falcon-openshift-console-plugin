@@ -16,6 +16,7 @@ BRIDGE_K8S_MODE="off-cluster"
 BRIDGE_K8S_AUTH="bearer-token"
 BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS=true
 BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT=$(oc whoami --show-server)
+BRIDGE_BRANDING="openshift"
 # The monitoring operator is not always installed (e.g. for local OpenShift). Tolerate missing config maps.
 set +e
 BRIDGE_K8S_MODE_OFF_CLUSTER_THANOS=$(oc -n openshift-config-managed get configmap monitoring-shared-config -o jsonpath='{.data.thanosPublicURL}' 2>/dev/null)
@@ -45,8 +46,19 @@ if [ -x "$(command -v podman)" ]; then
         BRIDGE_PLUGINS="${PLUGIN_NAME}=http://localhost:9001"
         podman run --pull always --platform $CONSOLE_IMAGE_PLATFORM --rm --network=host --env-file <(set | grep BRIDGE) $CONSOLE_IMAGE
     else
+        # to enable a plugin that is enabled on a remote cluster, expose it with a Route with TLS passthrough
+        # and then add it to the plugins list:
+        #    BRIDGE_PLUGINS="kubevirt-plugin=https://kubevirt-console-plugin-openshift-cnv.apps.cluster.example.com,${PLUGIN_NAME}=http://host.containers.internal:9001"
         BRIDGE_PLUGINS="${PLUGIN_NAME}=http://host.containers.internal:9001"
-        podman run --pull always --platform $CONSOLE_IMAGE_PLATFORM --rm -p "$CONSOLE_PORT":9000 --env-file <(set | grep BRIDGE) $CONSOLE_IMAGE
+
+        # we need --plugin-proxy in development instead of relying on the plugin's reverse proxy, but
+        # can't use BRIDGE_PLUGIN_PROXY environment configuration because `set` will print it beginning
+        # with a single quote and cannot be parsed as JSON. instead, we have to override the CMD for
+        # the container https://github.com/openshift/console/blob/master/Dockerfile#L64
+        podman run --pull always --platform $CONSOLE_IMAGE_PLATFORM --rm -p "$CONSOLE_PORT":9000 --env-file <(set | grep BRIDGE) $CONSOLE_IMAGE \
+            /opt/bridge/bin/bridge \
+            --public-dir=/opt/bridge/static \
+            --plugin-proxy='{"services":[{"consoleAPIPath":"/api/proxy/plugin/falcon-openshift-console-plugin/reproxy/crwdapi/","endpoint":"https://api.us-2.crowdstrike.com"}]}'
     fi
 else
     BRIDGE_PLUGINS="${PLUGIN_NAME}=http://host.docker.internal:9001"
