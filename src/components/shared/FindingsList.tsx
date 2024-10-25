@@ -16,7 +16,6 @@ import {
   EmptyStateVariant,
   EmptyStateHeader,
   EmptyStateIcon,
-  EmptyStateBody,
 } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons';
 import * as React from 'react';
@@ -57,7 +56,6 @@ export default function FindingsList({
 
     queryPromise
       .then((resp) => {
-        if (resp['resources'].length == 0) return;
         const findings = resp['resources'];
         if (sortFn) findings.sort(sortFn);
         setFindings(findings);
@@ -139,9 +137,6 @@ export default function FindingsList({
       {!loading && !error && findings && findings.length == 0 && (
         <EmptyState variant={EmptyStateVariant.xs}>
           <EmptyStateHeader titleText="No findings" icon={<EmptyStateIcon icon={CheckIcon} />} />
-          <EmptyStateBody>
-            <p>No findings.</p>
-          </EmptyStateBody>
         </EmptyState>
       )}
     </>
