@@ -1,6 +1,6 @@
 {
   "name": "falcon-openshift-console-plugin",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "CrowdStrike Falcon OpenShift console plugin",
   "private": true,
   "license": "Apache-2.0",
@@ -72,7 +72,7 @@
   },
   "consolePlugin": {
     "name": "falcon-openshift-console-plugin",
-    "version": "0.0.1",
+    "version": "0.2.1",
     "displayName": "CrowdStrike Falcon OpenShift console plugin",
     "description": "Extends the OpenShift console with data from the CrowdStrike Falcon platform.",
     "exposedModules": {
