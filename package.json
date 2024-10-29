@@ -83,5 +83,6 @@
   },
   "dependencies": {
     "crowdstrike-falcon": "^0.4.0"
-  }
+  },
+  "packageManager": "yarn@4.5.1"
 }

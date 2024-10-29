@@ -2,5 +2,6 @@
 **/dist
 **/.DS_Store
 .devcontainer/dev.env
+.yarn
 integration-tests/videos
 integration-tests/screenshots
