@@ -1,6 +1,6 @@
 FROM registry.access.redhat.com/ubi9/nodejs-20-minimal:latest AS build
 USER root
-RUN command -v yarn || npm i -g yarn
+RUN npm install -g corepack
 
 ADD . /usr/src/app
 WORKDIR /usr/src/app

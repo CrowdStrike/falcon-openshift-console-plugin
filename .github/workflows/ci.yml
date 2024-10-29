@@ -2,13 +2,13 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
     paths-ignore:
       - 'README.md'
       - '.devcontainer/**'
       - '.github/**'
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
     paths-ignore:
       - 'README.md'
       - '.devcontainer/**'
@@ -23,17 +23,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: yarn
 
-      - name: Install Yarn
-        run: npm install -g yarn
-
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn --immutable
 
       - name: Build
         run: yarn build
