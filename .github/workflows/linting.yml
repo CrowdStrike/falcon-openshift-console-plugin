@@ -2,13 +2,13 @@ name: Yarn Lint
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
     paths-ignore:
       - 'README.md'
       - '.devcontainer/**'
       - '.github/**'
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
     paths-ignore:
       - 'README.md'
       - '.devcontainer/**'
@@ -20,11 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Yarn
-        run: npm install -g yarn
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn --immutable
 
       - name: Lint
         run: yarn lint
